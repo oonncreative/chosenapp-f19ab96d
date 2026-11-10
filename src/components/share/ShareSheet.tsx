@@ -135,7 +135,7 @@ export function ShareSheet({ open, onOpenChange, mensagem, sentimento }: Props) 
                 height,
               }}
             >
-              <ShareCanvas mensagem={mensagem} options={options} />
+              <ShareCanvas mensagem={mensagem} options={options} sentimento={sentimento} />
             </div>
           </div>
         </div>
@@ -150,12 +150,30 @@ export function ShareSheet({ open, onOpenChange, mensagem, sentimento }: Props) 
             zIndex: -1,
           }}
         >
-          <ShareCanvas ref={exportRef} mensagem={mensagem} options={options} />
+          <ShareCanvas ref={exportRef} mensagem={mensagem} options={options} sentimento={sentimento} />
         </div>
 
         {/* Controles */}
         <div className="space-y-5 px-5 pb-5">
+          {/* Estilo */}
+          <Section title="Estilo">
+            <div className="grid grid-cols-2 gap-2">
+              {(["minimalista", "moderna"] as const).map((e) => (
+                <button
+                  key={e}
+                  onClick={() => update("estilo", e)}
+                  className={`h-11 rounded-full border text-sm font-semibold transition-colors ${
+                    options.estilo === e ? "border-black bg-black text-white" : "border-gray-200"
+                  }`}
+                >
+                  {e === "minimalista" ? "Minimalista" : "Moderna"}
+                </button>
+              ))}
+            </div>
+          </Section>
+
           {/* Tema */}
+          {options.estilo === "minimalista" && (
           <Section title="Tema">
             <div className="flex gap-2 flex-wrap">
               {(Object.keys(THEMES) as ShareTheme[]).map((t) => (
