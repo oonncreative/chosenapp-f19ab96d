@@ -275,7 +275,7 @@ const ModernaCanvas = forwardRef<HTMLDivElement, Props>(function ModernaCanvas(
             <img src={mascote} alt="" crossOrigin="anonymous" style={{ position: "absolute", right: Math.round(40 * scale), top: -mascH * 0.72, height: mascH, width: "auto", objectFit: "contain" }} />
           )}
           <div ref={cardRef} style={{ position: "relative", background: "#ffffff", borderRadius: Math.round(56 * scale), padding: `${cardPadY}px ${Math.round(60 * scale)}px`, boxShadow: "0 30px 80px -30px rgba(0,0,0,0.25)", textAlign: "left" }}>
-            {sentimento && (
+            {sentimento && options.showRef && (
               <span style={{ display: "inline-block", background: "#ece8f6", color: "rgba(28,28,28,0.7)", borderRadius: 999, padding: `${Math.round(10 * scale)}px ${Math.round(24 * scale)}px`, fontSize: Math.round(22 * scale), fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase" }}>
                 {sentimento}
               </span>
