@@ -114,7 +114,41 @@ function MensagemPage() {
   const [favMap, setFavMap] = useState<Record<string, boolean>>({});
   const [shareOpen, setShareOpen] = useState(false);
   const [showHint, setShowHint] = useState(false);
-  const [lendo, setLendo] = useState(false);
+  const gesto = useRef<{ y: number; t: number; topo: boolean; fim: boolean } | null>(null);
+  const irPara = useCallback((idx: number) => {
+    const el = slideRefs.current[idx];
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+  const estadoCard = (target: EventTarget | null) => {
+    const card = (target as HTMLElement | null)?.closest?.("[data-card]") as HTMLElement | null;
+    if (!card) return { topo: true, fim: true };
+    return { topo: card.scrollTop <= 2, fim: card.scrollTop + card.clientHeight >= card.scrollHeight - 2 };
+  };
+  // Arrasto longo e firme: só muda de frase com >= 140px e o texto no fim/início.
+  const onTouchStart = (e: React.TouchEvent) => {
+    const { topo, fim } = estadoCard(e.target);
+    gesto.current = { y: e.touches[0].clientY, t: Date.now(), topo, fim };
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    const g = gesto.current; gesto.current = null;
+    if (!g) return;
+    const dy = e.changedTouches[0].clientY - g.y;
+    const atual = estadoCard(e.target);
+    if (dy <= -140 && g.fim && atual.fim) irPara(currentIndex + 1);
+    else if (dy >= 140 && g.topo && atual.topo && currentIndex > 0) irPara(currentIndex - 1);
+  };
+  const wheelAcc = useRef(0);
+  const wheelLock = useRef(0);
+  const onWheel = (e: React.WheelEvent) => {
+    const { topo, fim } = estadoCard(e.target);
+    if ((e.deltaY > 0 && !fim) || (e.deltaY < 0 && !topo)) { wheelAcc.current = 0; return; }
+    if (Date.now() < wheelLock.current) return;
+    wheelAcc.current += e.deltaY;
+    if (Math.abs(wheelAcc.current) > 240) {
+      const dir = wheelAcc.current > 0 ? 1 : -1; wheelAcc.current = 0; wheelLock.current = Date.now() + 700;
+      if (dir > 0) irPara(currentIndex + 1); else if (currentIndex > 0) irPara(currentIndex - 1);
+    }
+  };
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const slideRefs = useRef<(HTMLElement | null)[]>([]);
 
@@ -286,7 +320,10 @@ function MensagemPage() {
 
       <main
         ref={scrollerRef}
-        className={`relative z-10 flex-1 min-h-0 w-full ${lendo ? "overflow-hidden" : "overflow-y-auto"} snap-y snap-mandatory no-scrollbar overscroll-contain`}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+        onWheel={onWheel}
+        className={`relative z-10 flex-1 min-h-0 w-full overflow-hidden touch-none snap-y snap-mandatory no-scrollbar overscroll-contain`}
         style={{ scrollBehavior: "smooth" }}
       >
         {feed.map((m, idx) => {
@@ -309,7 +346,7 @@ function MensagemPage() {
                     className="pointer-events-none absolute -top-[88px] right-3 z-0 h-[120px] w-auto object-contain drop-shadow-md"
                   />
                 )}
-                <div className="relative z-10 min-h-0 overflow-y-auto overscroll-contain no-scrollbar rounded-[28px] bg-background px-6 py-6 text-left shadow-[0_10px_40px_-12px_rgba(0,0,0,0.18)]">
+                <div data-card className="relative z-10 min-h-0 touch-pan-y overflow-y-auto overscroll-contain no-scrollbar rounded-[28px] bg-background px-6 py-6 text-left shadow-[0_10px_40px_-12px_rgba(0,0,0,0.18)]">
                   <span className="inline-flex h-7 items-center rounded-full bg-tint-lavender px-3 text-[11px] font-bold tracking-[0.15em] uppercase text-ink/70">
                     {sentimento}
                   </span>
@@ -320,7 +357,7 @@ function MensagemPage() {
                     <p className="mt-3 text-[15px] text-ink/55">{m.referencia}</p>
                   )}
 
-                  {m.resumo && <ResumoBlock key={m.id} text={m.resumo} onExpandedChange={idx === currentIndex ? setLendo : undefined} />}
+                  {m.resumo && <ResumoBlock key={m.id} text={m.resumo} />}
                 </div>
               </div>
             </section>
@@ -335,12 +372,6 @@ function MensagemPage() {
             Arraste para a próxima
           </span>
         </div>
-      )}
-
-      {lendo && (
-        <p className="relative z-20 shrink-0 bg-background pt-1 text-center text-[11px] font-semibold text-ink/50">
-          Modo leitura · toque em “Menos” para mudar de frase
-        </p>
       )}
 
       {/* Footer fixo */}
