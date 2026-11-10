@@ -10,9 +10,10 @@ import { MASCOTE_POR_SENTIMENTO } from "@/lib/mascotes";
 import chosenIcone from "@/assets/chosen-icone.png.asset.json";
 import ceuAmanhecer from "@/assets/ceu-amanhecer.jpg";
 
-function ResumoBlock({ text }: { text: string }) {
+function ResumoBlock({ text, onExpandedChange }: { text: string; onExpandedChange?: (v: boolean) => void }) {
   const pRef = useRef<HTMLParagraphElement | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
+  useEffect(() => { onExpandedChange?.(isExpanded); }, [isExpanded, onExpandedChange]);
   const [overflows, setOverflows] = useState(false);
 
   useEffect(() => {
@@ -113,6 +114,7 @@ function MensagemPage() {
   const [favMap, setFavMap] = useState<Record<string, boolean>>({});
   const [shareOpen, setShareOpen] = useState(false);
   const [showHint, setShowHint] = useState(false);
+  const [lendo, setLendo] = useState(false);
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const slideRefs = useRef<(HTMLElement | null)[]>([]);
 
@@ -284,7 +286,7 @@ function MensagemPage() {
 
       <main
         ref={scrollerRef}
-        className="relative z-10 flex-1 min-h-0 w-full overflow-y-auto snap-y snap-mandatory no-scrollbar overscroll-contain"
+        className={`relative z-10 flex-1 min-h-0 w-full ${lendo ? "overflow-hidden" : "overflow-y-auto"} snap-y snap-mandatory no-scrollbar overscroll-contain`}
         style={{ scrollBehavior: "smooth" }}
       >
         {feed.map((m, idx) => {
@@ -297,9 +299,9 @@ function MensagemPage() {
               ref={(el) => {
                 slideRefs.current[idx] = el;
               }}
-              className="snap-start snap-always h-full min-h-full w-full flex flex-col items-center justify-end px-4 sm:px-6 pt-40 pb-4"
+              className="snap-start snap-always h-full min-h-full w-full flex flex-col items-center justify-end px-4 sm:px-6 pt-28 pb-4"
             >
-              <div className="relative w-full max-w-md animate-in fade-in duration-500">
+              <div className="relative flex min-h-0 max-h-full w-full max-w-md flex-col animate-in fade-in duration-500">
                 {mascote && (
                   <img
                     src={mascote}
@@ -307,7 +309,7 @@ function MensagemPage() {
                     className="pointer-events-none absolute -top-[88px] right-3 z-0 h-[120px] w-auto object-contain drop-shadow-md"
                   />
                 )}
-                <div className="relative z-10 max-h-[calc(100dvh-20rem)] overflow-y-auto no-scrollbar rounded-[28px] bg-background px-6 py-6 text-left shadow-[0_10px_40px_-12px_rgba(0,0,0,0.18)]">
+                <div className="relative z-10 min-h-0 overflow-y-auto overscroll-contain no-scrollbar rounded-[28px] bg-background px-6 py-6 text-left shadow-[0_10px_40px_-12px_rgba(0,0,0,0.18)]">
                   <span className="inline-flex h-7 items-center rounded-full bg-tint-lavender px-3 text-[11px] font-bold tracking-[0.15em] uppercase text-ink/70">
                     {sentimento}
                   </span>
@@ -318,7 +320,7 @@ function MensagemPage() {
                     <p className="mt-3 text-[15px] text-ink/55">{m.referencia}</p>
                   )}
 
-                  {m.resumo && <ResumoBlock text={m.resumo} />}
+                  {m.resumo && <ResumoBlock key={m.id} text={m.resumo} onExpandedChange={idx === currentIndex ? setLendo : undefined} />}
                 </div>
               </div>
             </section>
@@ -333,6 +335,12 @@ function MensagemPage() {
             Arraste para a próxima
           </span>
         </div>
+      )}
+
+      {lendo && (
+        <p className="relative z-20 shrink-0 bg-background pt-1 text-center text-[11px] font-semibold text-ink/50">
+          Modo leitura · toque em “Menos” para mudar de frase
+        </p>
       )}
 
       {/* Footer fixo */}
