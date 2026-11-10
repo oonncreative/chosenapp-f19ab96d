@@ -221,8 +221,8 @@ const ModernaCanvas = forwardRef<HTMLDivElement, Props>(function ModernaCanvas(
         display: "flex", flexDirection: "column", alignItems: "center",
       }}
     >
-      <img src={ceuAmanhecer} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "60%", objectFit: "cover" }} />
-      <div style={{ position: "absolute", left: 0, right: 0, top: 0, height: "60%", background: "linear-gradient(to bottom, rgba(251,248,241,0) 40%, #fbf8f1 100%)" }} />
+      <img src={ceuAmanhecer} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+      <div style={{ position: "absolute", left: 0, right: 0, top: 0, bottom: 0, background: "linear-gradient(to bottom, rgba(251,248,241,0) 25%, rgba(251,248,241,0.85) 55%, #fbf8f1 75%)" }} />
       <p style={{ position: "relative", marginTop: Math.round((isH || isSq ? 60 : 110) * scale), fontSize: Math.round(30 * scale), fontWeight: 800, letterSpacing: "0.35em", color: "#6b6a2e" }}>
         CHOSEN
       </p>
