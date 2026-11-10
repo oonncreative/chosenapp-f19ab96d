@@ -4,7 +4,7 @@ import { ArrowLeft, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 import { AppFooter } from "@/components/AppFooter";
 import { getLivro } from "@/lib/biblia";
-import mascote from "@/assets/mascotes/mascote-1.png.asset.json";
+import mascote from "@/assets/img/mascote-1.webp";
 import {
   getLidosDoLivro,
   getMarcador,
@@ -280,7 +280,7 @@ function TrilhaCapitulos({
 
             {aqui && (
               <image
-                href={mascote.url}
+                href={mascote}
                 x={p.x - 24}
                 y={p.y - 78}
                 width={48}

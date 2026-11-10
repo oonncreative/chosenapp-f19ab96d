@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
-import chosenIcone from "@/assets/chosen-icone.png.asset.json";
+import chosenIcone from "@/assets/img/chosen-icone.webp";
 import ceuAmanhecer from "@/assets/ceu-amanhecer.jpg";
 
 /** Céu do amanhecer no topo, mesmo estilo da tela de frases. */
@@ -24,7 +24,7 @@ export function ChosenHeader() {
         <ArrowLeft className="h-5 w-5 text-ink" />
       </Link>
       <span className="flex items-center justify-center gap-1.5 text-sm font-bold tracking-[0.3em] uppercase text-brand-olive">
-        <img src={chosenIcone.url} alt="" className="h-6 w-6 object-contain" />
+        <img src={chosenIcone} alt="" className="h-6 w-6 object-contain" />
         CHOSEN
       </span>
       <span />

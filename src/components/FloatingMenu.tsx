@@ -3,7 +3,7 @@ import { useNavigate, useRouterState } from "@tanstack/react-router";
 import { ChevronRight, Menu, Plus, RefreshCw, Sparkles, CalendarClock, Share2, HelpCircle, Trash2, Heart, Send, Smile, Shuffle, BellRing, Wind, Copy, Check, PlayCircle, Bell, Clock, BookOpen, HandHeart, Sun, Search, Home } from "lucide-react";
 import { toast } from "sonner";
 import nuvensLavanda from "@/assets/nuvens-lavanda.jpg";
-import mascotePaz from "@/assets/mascotes/mascote-2.png.asset.json";
+import mascotePaz from "@/assets/img/mascote-2.webp";
 import {
   Sheet,
   SheetContent,
@@ -266,7 +266,7 @@ export function FloatingMenu() {
               <span className="mt-2 text-[12px] leading-snug text-ink/65">Converse com Deus em todos os momentos.</span>
             </div>
             <img
-              src={mascotePaz.url}
+              src={mascotePaz}
               alt=""
               className="pointer-events-none absolute -top-10 right-1 h-[150%] max-h-[190px] w-auto object-contain drop-shadow-md"
             />

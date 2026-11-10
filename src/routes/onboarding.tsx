@@ -1,4 +1,4 @@
-import chosenIcone from "@/assets/chosen-icone.png.asset.json";
+import chosenIcone from "@/assets/img/chosen-icone.webp";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -68,7 +68,7 @@ function Onboarding() {
       <div className="w-full max-w-sm flex flex-col items-center justify-between h-full py-20">
         <div className="flex-1 flex flex-col items-center justify-center gap-8">
           <div className="flex items-center gap-2.5 mb-4">
-            <img src={chosenIcone.url} alt="" className="h-16 w-16 object-contain" />
+            <img src={chosenIcone} alt="" className="h-16 w-16 object-contain" />
             <span className="text-3xl font-bold tracking-tight text-brand-olive">CHOSEN</span>
           </div>
           

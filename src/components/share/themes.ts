@@ -50,17 +50,17 @@ export const DEFAULT_SHARE_OPTIONS: ShareOptions = {
   textScale: 0,
 };
 
-import m1 from "@/assets/mascotes/mascote-1.png.asset.json";
-import m2 from "@/assets/mascotes/mascote-2.png.asset.json";
-import m3 from "@/assets/mascotes/mascote-3.png.asset.json";
-import m4 from "@/assets/mascotes/mascote-4.png.asset.json";
-import m5 from "@/assets/mascotes/mascote-5.png.asset.json";
-import m6 from "@/assets/mascotes/mascote-6.png.asset.json";
-import m7 from "@/assets/mascotes/mascote-7.png.asset.json";
-import m8 from "@/assets/mascotes/mascote-8.png.asset.json";
-import m9 from "@/assets/mascotes/mascote-9.png.asset.json";
-import m10 from "@/assets/mascotes/mascote-10.png.asset.json";
+import m1 from "@/assets/img/mascote-1.webp";
+import m2 from "@/assets/img/mascote-2.webp";
+import m3 from "@/assets/img/mascote-3.webp";
+import m4 from "@/assets/img/mascote-4.webp";
+import m5 from "@/assets/img/mascote-5.webp";
+import m6 from "@/assets/img/mascote-6.webp";
+import m7 from "@/assets/img/mascote-7.webp";
+import m8 from "@/assets/img/mascote-8.webp";
+import m9 from "@/assets/img/mascote-9.webp";
+import m10 from "@/assets/img/mascote-10.webp";
 
 export const MASCOTES: { id: number; url: string }[] = [
   m1, m2, m3, m4, m5, m6, m7, m8, m9, m10,
-].map((m, i) => ({ id: i + 1, url: m.url }));
+].map((url, i) => ({ id: i + 1, url }));

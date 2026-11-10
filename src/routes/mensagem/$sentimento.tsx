@@ -7,7 +7,7 @@ import { isFavorite, toggleFavorite, addToHistory } from "@/lib/favorites";
 import { toast } from "sonner";
 import { ShareSheet } from "@/components/share/ShareSheet";
 import { MASCOTE_POR_SENTIMENTO } from "@/lib/mascotes";
-import chosenIcone from "@/assets/chosen-icone.png.asset.json";
+import chosenIcone from "@/assets/img/chosen-icone.webp";
 import ceuAmanhecer from "@/assets/ceu-amanhecer.jpg";
 
 function ResumoBlock({ text, onExpandedChange }: { text: string; onExpandedChange?: (v: boolean) => void }) {
@@ -303,7 +303,7 @@ function MensagemPage() {
           <ArrowLeft className="h-5 w-5 text-ink" />
         </Link>
         <span className="flex items-center justify-center gap-1.5 text-sm font-bold tracking-[0.3em] uppercase text-brand-olive">
-          <img src={chosenIcone.url} alt="" className="h-6 w-6 object-contain" />
+          <img src={chosenIcone} alt="" className="h-6 w-6 object-contain" />
           CHOSEN
         </span>
         <button

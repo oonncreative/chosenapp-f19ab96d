@@ -7,7 +7,7 @@ import {
   detectarPlataforma,
   type Plataforma,
 } from "@/lib/storeLinks";
-import logo from "@/assets/chosen-icone.png.asset.json";
+import logo from "@/assets/img/chosen-icone.webp";
 
 export const Route = createFileRoute("/baixar")({
   head: () => ({
@@ -72,7 +72,7 @@ function Baixar() {
     <div className="h-[100dvh] overflow-y-auto overscroll-contain bg-background">
       <main className="mx-auto flex w-full max-w-md flex-col items-center px-6 pb-16 pt-[max(env(safe-area-inset-top),2.5rem)] text-center">
         <img
-          src={logo.url}
+          src={logo}
           alt="Logo do Chosen"
           className="h-20 w-20 rounded-3xl object-contain"
         />
