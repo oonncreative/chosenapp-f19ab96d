@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useLayoutEffect, useRef, useState } from "react";
 import type { Mensagem } from "@/lib/data";
 import { FORMATS, THEMES, type ShareOptions } from "./themes";
 import { MASCOTE_POR_SENTIMENTO } from "@/lib/mascotes";
@@ -208,10 +208,53 @@ const ModernaCanvas = forwardRef<HTMLDivElement, Props>(function ModernaCanvas(
   const mascote = options.mascoteUrl ?? (sentimento ? MASCOTE_POR_SENTIMENTO[sentimento] : null);
   const tf = 1 - (options.textScale ?? 0) * 0.12;
   const len = mensagem.texto.length;
-  const textSize = Math.round((len < 110 ? 64 : len < 220 ? 52 : 44) * scale * tf);
+  const baseText = len < 110 ? 64 : len < 220 ? 52 : 44;
   const mascH = Math.round(260 * scale);
   const showResumo = options.showResumo && !!mensagem.resumo && !isH;
   const ink = "#1c1c1c";
+
+  // Reduz a letra até a reflexão inteira caber no cartão — sem cortar com "...".
+  const [fit, setFit] = useState(1);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const passes = useRef(0);
+  const deps = [
+    options.format,
+    options.showResumo,
+    options.showRef,
+    options.textScale,
+    options.mascoteUrl,
+    options.signature,
+    options.showFooter,
+    sentimento,
+    mensagem.texto,
+    mensagem.resumo,
+  ];
+
+  useLayoutEffect(() => {
+    passes.current = 0;
+    setFit(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  useLayoutEffect(() => {
+    const wrap = wrapRef.current;
+    const card = cardRef.current;
+    if (!wrap || !card) return;
+    const cs = getComputedStyle(wrap);
+    const avail = wrap.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    const need = card.offsetHeight;
+    if (need <= avail + 1 || passes.current >= 10) return;
+    passes.current += 1;
+    const ratio = Math.max(0.5, Math.min(0.97, avail / need));
+    setFit((f) => Math.max(0.5, +(f * ratio).toFixed(3)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fit, ...deps]);
+
+  const textSize = Math.round(baseText * scale * tf * (fit < 0.9 ? 0.94 : 1));
+  const resumoSize = Math.max(16, Math.round(27 * scale * (fit < 0.97 ? fit : 1)));
+  const cardPadY = Math.round((fit < 0.85 ? 44 : 64) * scale);
+
   return (
     <div
       ref={ref}
@@ -226,12 +269,12 @@ const ModernaCanvas = forwardRef<HTMLDivElement, Props>(function ModernaCanvas(
       <p style={{ position: "relative", marginTop: Math.round((isH || isSq ? 60 : 110) * scale), fontSize: Math.round(30 * scale), fontWeight: 800, letterSpacing: "0.35em", color: "#6b6a2e" }}>
         CHOSEN
       </p>
-      <div style={{ position: "relative", flex: 1, width: "100%", display: "flex", alignItems: "center", justifyContent: "center", padding: `${mascH * 0.6}px ${Math.round(isH ? 260 : 70 * scale)}px ${Math.round(40 * scale)}px` }}>
+      <div ref={wrapRef} style={{ position: "relative", flex: 1, width: "100%", display: "flex", alignItems: "center", justifyContent: "center", padding: `${mascH * 0.6}px ${Math.round(isH ? 260 : 70 * scale)}px ${Math.round(40 * scale)}px` }}>
         <div style={{ position: "relative", width: "100%", maxWidth: 1100 }}>
           {mascote && (
             <img src={mascote} alt="" crossOrigin="anonymous" style={{ position: "absolute", right: Math.round(40 * scale), top: -mascH * 0.72, height: mascH, width: "auto", objectFit: "contain" }} />
           )}
-          <div style={{ position: "relative", background: "#ffffff", borderRadius: Math.round(56 * scale), padding: `${Math.round(64 * scale)}px ${Math.round(60 * scale)}px`, boxShadow: "0 30px 80px -30px rgba(0,0,0,0.25)", textAlign: "left" }}>
+          <div ref={cardRef} style={{ position: "relative", background: "#ffffff", borderRadius: Math.round(56 * scale), padding: `${cardPadY}px ${Math.round(60 * scale)}px`, boxShadow: "0 30px 80px -30px rgba(0,0,0,0.25)", textAlign: "left" }}>
             {sentimento && (
               <span style={{ display: "inline-block", background: "#ece8f6", color: "rgba(28,28,28,0.7)", borderRadius: 999, padding: `${Math.round(10 * scale)}px ${Math.round(24 * scale)}px`, fontSize: Math.round(22 * scale), fontWeight: 800, letterSpacing: "0.15em", textTransform: "uppercase" }}>
                 {sentimento}
@@ -246,7 +289,7 @@ const ModernaCanvas = forwardRef<HTMLDivElement, Props>(function ModernaCanvas(
             {showResumo && (
               <div style={{ marginTop: Math.round(40 * scale), paddingTop: Math.round(32 * scale), borderTop: "2px solid rgba(0,0,0,0.06)" }}>
                 <p style={{ fontSize: Math.round(30 * scale), fontWeight: 800, color: ink }}>Para refletir</p>
-                <p style={{ marginTop: 12, fontSize: Math.round(27 * scale), lineHeight: 1.55, color: "rgba(28,28,28,0.7)", overflow: "hidden", display: "-webkit-box", WebkitBoxOrient: "vertical", WebkitLineClamp: isSq ? 3 : isPost ? 5 : 9 }}>
+                <p style={{ marginTop: 12, fontSize: resumoSize, lineHeight: 1.55, color: "rgba(28,28,28,0.7)" }}>
                   {mensagem.resumo}
                 </p>
               </div>
