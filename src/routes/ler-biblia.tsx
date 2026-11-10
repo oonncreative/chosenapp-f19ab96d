@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Search, ChevronRight, Loader2, X } from "lucide-react";
+import { ChosenBackdrop, ChosenHeader } from "@/components/ChosenBackdrop";
 import { LIVROS_AT, LIVROS_NT } from "@/lib/biblia";
 import { buscarTexto, interpretarReferencia, type Resultado } from "@/lib/biblia/busca";
 
@@ -102,29 +103,23 @@ function LerBiblia() {
   const lista = aba === "at" ? LIVROS_AT : LIVROS_NT;
 
   return (
-    <div className="flex flex-col h-[100dvh] bg-white">
-      <header className="grid grid-cols-3 items-center px-4 pt-[max(env(safe-area-inset-top),2rem)] pb-2 shrink-0">
-        <Link
-          to="/home"
-          aria-label="Voltar"
-          className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-gray-100 justify-self-start"
-        >
-          <ArrowLeft className="h-6 w-6 text-gray-400" />
-        </Link>
-        <span className="text-sm font-bold tracking-[0.3em] uppercase text-black text-center">
-          Bíblia
-        </span>
-        <span />
-      </header>
+    <div className="relative flex flex-col h-[100dvh] overflow-hidden bg-background">
+      <ChosenBackdrop />
+      <ChosenHeader />
 
-      <main className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 pb-10">
+      <main className="relative z-10 flex-1 min-h-0 overflow-y-auto overscroll-contain no-scrollbar px-4 pb-32">
         <div className="mx-auto w-full max-w-md">
+          <div className="pt-6 pb-4 px-1">
+            <span className="text-[11px] font-bold tracking-[0.25em] uppercase text-ink/60">Bíblia completa</span>
+            <h1 className="mt-1 text-[30px] font-bold leading-tight tracking-tight text-ink">O que você quer ler hoje?</h1>
+          </div>
+          <div className="rounded-[28px] bg-background px-4 py-5 shadow-[0_10px_40px_-12px_rgba(0,0,0,0.18)]">
           <form
             onSubmit={(e) => {
               e.preventDefault();
               pesquisar(q);
             }}
-            className="mt-2 flex items-center gap-2 rounded-2xl border border-gray-200 bg-gray-50 px-4 h-14 focus-within:border-black"
+            className="mt-2 flex items-center gap-2 rounded-full bg-muted px-4 h-14 ring-1 ring-transparent focus-within:ring-ink/30"
           >
             <Search className="h-5 w-5 text-gray-400 shrink-0" />
             <input
@@ -144,7 +139,7 @@ function LerBiblia() {
           {ref && (
             <button
               onClick={() => irPara(ref.livro.slug, ref.capitulo, ref.versiculo)}
-              className="mt-3 w-full flex items-center justify-between rounded-2xl bg-black text-white px-4 py-3.5 active:scale-[0.99] transition-transform"
+              className="mt-3 w-full flex items-center justify-between rounded-2xl bg-brand-yellow text-ink px-4 py-3.5 font-semibold active:scale-[0.99] transition-transform"
             >
               <span className="text-[15px] font-medium">
                 Abrir {ref.livro.nome} {ref.capitulo}
@@ -164,7 +159,7 @@ function LerBiblia() {
                     setQ(e);
                     pesquisar(e);
                   }}
-                  className="rounded-full border border-gray-200 px-3 py-1.5 text-[12px] text-gray-600 active:bg-gray-100"
+                  className="rounded-full bg-tint-lavender px-3 py-1.5 text-[12px] font-medium text-ink/80 active:scale-95 transition"
                 >
                   {e}
                 </button>
@@ -213,13 +208,13 @@ function LerBiblia() {
 
           {!q.trim() && (
             <>
-              <div className="mt-6 grid grid-cols-2 rounded-full bg-gray-100 p-1">
+              <div className="mt-6 grid grid-cols-2 rounded-full bg-muted p-1">
                 {(["at", "nt"] as const).map((t) => (
                   <button
                     key={t}
                     onClick={() => setAba(t)}
                     className={`rounded-full py-2.5 text-[13px] font-semibold transition-colors ${
-                      aba === t ? "bg-black text-white" : "text-gray-500"
+                      aba === t ? "bg-brand-yellow text-ink shadow-sm" : "text-ink/50"
                     }`}
                   >
                     {t === "at" ? "Antigo Testamento" : "Novo Testamento"}
@@ -235,7 +230,7 @@ function LerBiblia() {
                     <Link
                       to="/biblia/$livro"
                       params={{ livro: l.slug }}
-                      className="flex items-center justify-between rounded-2xl border border-gray-100 px-3.5 py-3 active:bg-gray-50"
+                      className="flex items-center justify-between rounded-2xl bg-muted/60 px-3.5 py-3 active:scale-[0.98] transition"
                     >
                       <span className="min-w-0">
                         <span className="block text-[14px] font-medium text-black truncate">
@@ -245,13 +240,14 @@ function LerBiblia() {
                           {l.capitulos} {l.capitulos === 1 ? "capítulo" : "capítulos"}
                         </span>
                       </span>
-                      <span className="text-[11px] font-bold text-gray-300">{l.abrev}</span>
+                      <span className="text-[11px] font-bold text-brand-olive/70">{l.abrev}</span>
                     </Link>
                   </li>
                 ))}
               </ul>
             </>
           )}
+          </div>
         </div>
       </main>
     </div>

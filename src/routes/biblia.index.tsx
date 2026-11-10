@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowLeft, BookOpen, Check, ChevronRight, Bookmark, RotateCcw, BookmarkX } from "lucide-react";
 import { toast } from "sonner";
-import { AppFooter } from "@/components/AppFooter";
+import { ChosenBackdrop, ChosenHeader } from "@/components/ChosenBackdrop";
 import { LIVROS_EVANGELHOS_CARTAS, LIVRO_APOCALIPSE } from "@/lib/biblia";
 import {
   formatarMarcador,
@@ -68,29 +68,18 @@ function BibliaIndex() {
   };
 
   return (
-    <div className="flex flex-col h-[100dvh] bg-white">
-      <header className="grid grid-cols-3 items-center px-4 pt-[max(env(safe-area-inset-top),2rem)] pb-2 shrink-0">
-        <Link
-          to="/home"
-          aria-label="Voltar"
-          className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-gray-100 justify-self-start"
-        >
-          <ArrowLeft className="h-6 w-6 text-gray-400" />
-        </Link>
-        <span className="text-sm font-bold tracking-[0.3em] uppercase text-black text-center">
-          CHOSEN
-        </span>
-        <span />
-      </header>
+    <div className="relative flex flex-col h-[100dvh] overflow-hidden bg-background">
+      <ChosenBackdrop />
+      <ChosenHeader />
 
-      <main className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-6 pb-28 pt-8">
+      <main className="relative z-10 flex-1 min-h-0 overflow-y-auto overscroll-contain no-scrollbar px-4 pb-32 pt-6">
         <div className="mx-auto w-full max-w-md">
-          <div className="flex items-center gap-2 mb-2">
-            <BookOpen className="h-5 w-5 text-black/70" strokeWidth={2} />
-            <h1 className="text-sm font-light tracking-[0.3em] uppercase text-black">
-              Novo Testamento
-            </h1>
+          <div className="px-1 pb-4">
+            <span className="text-[11px] font-bold tracking-[0.25em] uppercase text-ink/60">Sua leitura</span>
+            <h1 className="mt-1 text-[30px] font-bold leading-tight tracking-tight text-ink">Novo Testamento</h1>
           </div>
+          <div className="rounded-[28px] bg-background px-4 py-5 shadow-[0_10px_40px_-12px_rgba(0,0,0,0.18)]">
+
           <p className="text-sm text-black/60 mb-6">
             Leitura completa, sem internet. A gente guarda onde você parou.
           </p>
@@ -159,10 +148,10 @@ function BibliaIndex() {
             aqui={ondeParou?.livro === LIVRO_APOCALIPSE.slug ? ondeParou.capitulo : null}
             destaque
           />
+          </div>
         </div>
       </main>
 
-      <AppFooter />
     </div>
   );
 }
@@ -189,7 +178,7 @@ function LivroLinha({
       to="/biblia/$livro"
       params={{ livro: slug }}
       className={`flex items-center gap-3 rounded-2xl active:scale-[0.99] transition-all px-4 py-3 ${
-        destaque ? "bg-[#f1f26c]" : "bg-black/[0.04] hover:bg-black/[0.07]"
+        destaque ? "bg-brand-yellow" : "bg-muted/60"
       }`}
     >
       <span className="flex-1 min-w-0">
@@ -235,16 +224,16 @@ function ContinuarCard({
       params={{ livro: marcador.livro, capitulo: String(marcador.capitulo) }}
       hash={`v${marcador.versiculo}`}
       className={`flex items-center gap-3 rounded-2xl px-4 py-4 active:scale-[0.99] transition-all ${
-        destaque ? "bg-black text-white" : "bg-black/[0.04] text-black"
+        destaque ? "bg-brand-yellow text-ink" : "bg-muted/60 text-ink"
       }`}
     >
       <Bookmark
-        className={`h-5 w-5 shrink-0 ${destaque ? "text-[#f1f26c] fill-[#f1f26c]" : "text-black/50"}`}
+        className={`h-5 w-5 shrink-0 ${destaque ? "text-ink fill-ink" : "text-ink/50"}`}
       />
       <span className="flex-1 min-w-0">
         <span
           className={`block text-[10px] font-bold tracking-[0.25em] uppercase ${
-            destaque ? "text-white/60" : "text-black/40"
+            "text-ink/50"
           }`}
         >
           {titulo}
@@ -253,7 +242,7 @@ function ContinuarCard({
           {formatarMarcador(marcador)}
         </span>
       </span>
-      <ChevronRight className={`h-4 w-4 ${destaque ? "text-white/60" : "text-black/40"}`} />
+      <ChevronRight className={`h-4 w-4 ${"text-ink/50"}`} />
     </Link>
   );
 }
