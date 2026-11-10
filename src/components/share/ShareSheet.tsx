@@ -194,6 +194,7 @@ export function ShareSheet({ open, onOpenChange, mensagem, sentimento }: Props) 
               ))}
             </div>
           </Section>
+          )}
 
           {/* Formato */}
           <Section title="Formato">
