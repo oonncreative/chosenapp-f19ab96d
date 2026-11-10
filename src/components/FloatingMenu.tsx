@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useRouterState } from "@tanstack/react-router";
-import { ChevronRight, Menu, Plus, RefreshCw, Sparkles, CalendarClock, Share2, HelpCircle, Trash2, Heart, Send, Smile, Shuffle, BellRing, Wind, Copy, Check, PlayCircle, Bell, Clock, BookOpen, HandHeart, Sun, Search } from "lucide-react";
+import { ChevronRight, Menu, Plus, RefreshCw, Sparkles, CalendarClock, Share2, HelpCircle, Trash2, Heart, Send, Smile, Shuffle, BellRing, Wind, Copy, Check, PlayCircle, Bell, Clock, BookOpen, HandHeart, Sun, Search, Home } from "lucide-react";
 import { toast } from "sonner";
 import nuvensLavanda from "@/assets/nuvens-lavanda.jpg";
 import mascotePaz from "@/assets/mascotes/mascote-2.png.asset.json";
@@ -232,18 +232,12 @@ export function FloatingMenu() {
 
   return (
     <>
-      <QuickActions />
+      <QuickActions onMenu={() => setOpen(true)} />
 
 
 
 
-      <button
-        onClick={() => setOpen(true)}
-        aria-label="Menu"
-        className="fixed z-40 bottom-[max(env(safe-area-inset-bottom),0.5rem)] right-4 mb-9 w-12 h-12 rounded-full bg-[#f1f26c] text-black shadow-lg flex items-center justify-center active:scale-95 transition-transform"
-      >
-        <Menu className="h-5 w-5" strokeWidth={2.25} />
-      </button>
+
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent
@@ -1103,13 +1097,11 @@ function SendDialog({
     </Dialog>
   );
 }
-function QuickActions() {
+function QuickActions({ onMenu }: { onMenu: () => void }) {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [marcador, setMarcador] = useState<BibliaMarcador | null>(null);
-
   const lerMarcador = () => setMarcador(getMarcadorManual() ?? getMarcador());
-
   useEffect(() => {
     lerMarcador();
     const onFocus = () => lerMarcador();
@@ -1119,40 +1111,37 @@ function QuickActions() {
       window.removeEventListener("focus", onFocus);
       window.removeEventListener("storage", onFocus);
     };
-  }, []);
-
+  }, [pathname]);
   const abrev = marcador ? (getLivro(marcador.livro)?.abrev ?? marcador.nome) : null;
-
   const irBiblia = () => {
-    setOpen(false);
-    if (marcador) {
-      navigate({
-        to: "/biblia/$livro/$capitulo",
-        params: { livro: marcador.livro, capitulo: String(marcador.capitulo) },
-        hash: `v${marcador.versiculo}`,
-      });
-    } else {
-      navigate({ to: "/biblia" });
-    }
+    const m = getMarcadorManual() ?? getMarcador();
+    if (m) {
+      navigate({ to: "/biblia/$livro/$capitulo", params: { livro: m.livro, capitulo: String(m.capitulo) }, hash: `v${m.versiculo}` });
+    } else navigate({ to: "/biblia" });
   };
-
+  const isHome = pathname === "/home";
+  const isBiblia = pathname.startsWith("/biblia") || pathname.startsWith("/ler-biblia");
+  const item = "flex flex-1 flex-col items-center justify-center gap-0.5 h-14 rounded-2xl text-[11px] font-semibold transition active:scale-95";
   return (
-    <div className="fixed z-40 bottom-[max(env(safe-area-inset-bottom),0.5rem)] left-4 mb-9">
-      <button
-        onClick={() => {
-          lerMarcador();
-          irBiblia();
-        }}
-        onPointerDown={lerMarcador}
-        aria-label="Bíblia"
-        className="h-12 pl-3 pr-4 rounded-full bg-[#f1f26c] text-black shadow-lg flex items-center gap-2 active:scale-95 transition-transform"
-      >
-        <BookOpen className="h-5 w-5" strokeWidth={2.25} />
-        <span className="text-[13px] font-medium leading-none">
+    <nav
+      aria-label="Navegação principal"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-black/5 bg-background/95 backdrop-blur px-4 pt-1.5"
+      style={{ paddingBottom: "max(env(safe-area-inset-bottom), 0.5rem)" }}
+    >
+      <div className="mx-auto flex max-w-md items-center gap-2">
+        <button onClick={() => navigate({ to: "/home" })} aria-label="Início" className={`${item} ${isHome ? "bg-brand-yellow text-ink" : "text-ink/60"}`}>
+          <Home className="h-5 w-5" strokeWidth={2.25} />
+          Início
+        </button>
+        <button onClick={irBiblia} aria-label="Bíblia" className={`${item} ${isBiblia ? "bg-brand-yellow text-ink" : "text-ink/60"}`}>
+          <BookOpen className="h-5 w-5" strokeWidth={2.25} />
           {abrev ? `${abrev} ${marcador!.capitulo}` : "Bíblia"}
-        </span>
-      </button>
-    </div>
+        </button>
+        <button onClick={onMenu} aria-label="Menu" className={`${item} text-ink/60`}>
+          <Menu className="h-5 w-5" strokeWidth={2.25} />
+          Menu
+        </button>
+      </div>
+    </nav>
   );
 }
-

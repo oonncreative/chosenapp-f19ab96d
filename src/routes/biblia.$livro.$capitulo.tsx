@@ -365,8 +365,8 @@ function LeituraPage() {
       </main>
 
       <div
-        className="shrink-0 border-t border-black/5 bg-white px-[4.5rem] py-3"
-        style={{ paddingBottom: "max(env(safe-area-inset-bottom), 0.75rem)" }}
+        className="shrink-0 border-t border-black/5 bg-white px-4 pt-3"
+        style={{ paddingBottom: "calc(max(env(safe-area-inset-bottom), 0.5rem) + 4.75rem)" }}
       >
         {selecionados.length > 0 && (
           <div className="mx-auto mb-2 flex w-full max-w-md items-center gap-2 rounded-2xl bg-black px-3 py-2">
@@ -389,31 +389,29 @@ function LeituraPage() {
             </button>
           </div>
         )}
-        <div className="mx-auto mb-2 w-full max-w-md">
-          <button
-            onClick={pareiAqui}
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-black text-[14px] font-semibold text-white active:scale-[0.98] transition"
-          >
-            <Bookmark className="h-4 w-4 fill-[#f1f26c] text-[#f1f26c]" />
-            Parei aqui · versículo {versAtual}
-          </button>
-        </div>
         <div className="mx-auto flex w-full max-w-md items-center gap-2">
           <button
             onClick={irAnterior}
             disabled={!anteriorCap && !livroAnt}
-            className="flex h-11 flex-1 items-center justify-center gap-1 rounded-full bg-black/[0.04] text-[13px] font-medium text-black disabled:opacity-30 active:scale-[0.98] transition"
+            aria-label="Capítulo anterior"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-black/[0.05] text-black disabled:opacity-30 active:scale-95 transition"
           >
-            <ChevronLeft className="h-4 w-4" />
-            Anterior
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            onClick={pareiAqui}
+            className="flex h-12 flex-1 min-w-0 items-center justify-center gap-2 rounded-full bg-black px-3 text-[13px] font-semibold text-white active:scale-[0.98] transition"
+          >
+            <Bookmark className="h-4 w-4 shrink-0 fill-[#f1f26c] text-[#f1f26c]" />
+            <span className="truncate">Parei aqui · v. {versAtual}</span>
           </button>
           <button
             onClick={irProximo}
             disabled={!proximoCap && !livroProx}
-            className="flex h-11 flex-1 items-center justify-center gap-1 rounded-full bg-[#f1f26c] text-[13px] font-semibold text-black disabled:opacity-30 active:scale-[0.98] transition"
+            aria-label="Próximo capítulo"
+            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#f1f26c] text-black disabled:opacity-30 active:scale-95 transition"
           >
-            Próximo
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-5 w-5" />
           </button>
         </div>
       </div>

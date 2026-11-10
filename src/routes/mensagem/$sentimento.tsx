@@ -314,7 +314,9 @@ function MensagemPage() {
                   <p className={`mt-4 font-bold leading-[1.2] tracking-tight text-ink break-words select-text ${tamanho}`}>
                     {m.texto}
                   </p>
-                  <p className="mt-3 text-[15px] text-ink/55">{m.referencia}</p>
+                  {m.referencia && m.referencia.trim().toLowerCase() !== sentimento.trim().toLowerCase() && (
+                    <p className="mt-3 text-[15px] text-ink/55">{m.referencia}</p>
+                  )}
 
                   {m.resumo && <ResumoBlock text={m.resumo} />}
                 </div>
@@ -334,7 +336,7 @@ function MensagemPage() {
       )}
 
       {/* Footer fixo */}
-      <footer className="relative shrink-0 z-20 w-full px-4 pt-2 pb-[calc(env(safe-area-inset-bottom)+36px)] bg-background flex items-center justify-center gap-3">
+      <footer className="relative shrink-0 z-20 w-full px-4 pt-2 pb-[calc(env(safe-area-inset-bottom)+5rem)] bg-background flex items-center justify-center gap-3">
         <Button
           onClick={handleOpenShare}
           className="h-12 rounded-full border-none bg-brand-yellow text-ink hover:opacity-90 shadow-none flex items-center gap-2 px-6 transition-all active:scale-95 disabled:opacity-50"
