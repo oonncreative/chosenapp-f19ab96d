@@ -325,7 +325,7 @@ function MensagemPage() {
       </main>
 
       {showHint && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-28 z-30 flex flex-col items-center gap-1 text-gray-400 animate-in fade-in slide-in-from-bottom-2 duration-500">
+        <div className="pointer-events-none absolute inset-x-0 top-[18%] z-30 flex flex-col items-center gap-1 text-gray-400 animate-in fade-in slide-in-from-bottom-2 duration-500">
           <ChevronUp className="h-5 w-5 animate-bounce" />
           <span className="text-[11px] font-semibold tracking-[0.15em] text-ink/50">
             Arraste para a próxima

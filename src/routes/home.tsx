@@ -286,7 +286,7 @@ const TINTS = ["bg-tint-lavender", "bg-tint-sky", "bg-tint-peach", "bg-tint-mint
 function ListView({ navigate: _navigate }: { navigate: NavFn }) {
   const [destaque, ...resto] = CATEGORIAS;
   return (
-    <section className="flex-1 min-h-0 overflow-y-auto no-scrollbar px-5 sm:px-6 pb-36 pt-10">
+    <section className="flex-1 min-h-0 overflow-y-auto no-scrollbar px-5 sm:px-6 pb-36 pt-8">
       <div className="grid grid-cols-2 gap-3 w-full">
         <Link
           to="/mensagem/$sentimento"
