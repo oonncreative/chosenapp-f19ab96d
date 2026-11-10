@@ -343,7 +343,7 @@ function MensagemPage() {
                   <img
                     src={mascote}
                     alt=""
-                    className="pointer-events-none absolute -top-[88px] right-3 z-0 h-[120px] w-auto object-contain drop-shadow-md"
+                    className="pointer-events-none relative z-0 -mb-8 mr-3 h-[110px] w-auto shrink-0 self-end object-contain drop-shadow-md"
                   />
                 )}
                 <div data-card className="relative z-10 min-h-0 touch-pan-y overflow-y-auto overscroll-contain no-scrollbar rounded-[28px] bg-background px-6 py-6 text-left shadow-[0_10px_40px_-12px_rgba(0,0,0,0.18)]">
