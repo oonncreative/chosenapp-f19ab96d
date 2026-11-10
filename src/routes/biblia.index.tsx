@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, BookOpen, Check, ChevronRight, Bookmark, RotateCcw, BookmarkX } from "lucide-react";
+import { Check, ChevronRight, Bookmark, RotateCcw, BookmarkX } from "lucide-react";
 import { toast } from "sonner";
 import { ChosenBackdrop, ChosenHeader } from "@/components/ChosenBackdrop";
 import { LIVROS_EVANGELHOS_CARTAS, LIVRO_APOCALIPSE } from "@/lib/biblia";

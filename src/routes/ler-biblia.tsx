@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Search, ChevronRight, Loader2, X } from "lucide-react";
+import { Search, ChevronRight, Loader2, X } from "lucide-react";
 import { ChosenBackdrop, ChosenHeader } from "@/components/ChosenBackdrop";
 import { LIVROS_AT, LIVROS_NT } from "@/lib/biblia";
 import { buscarTexto, interpretarReferencia, type Resultado } from "@/lib/biblia/busca";

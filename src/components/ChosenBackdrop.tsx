@@ -13,11 +13,11 @@ export function ChosenBackdrop() {
   );
 }
 
-export function ChosenHeader({ voltar = "/home" }: { voltar?: string }) {
+export function ChosenHeader() {
   return (
     <header className="relative shrink-0 z-20 grid grid-cols-[2.5rem_1fr_2.5rem] h-14 items-center px-4 pt-[max(env(safe-area-inset-top),2rem)] box-content">
       <Link
-        to={voltar}
+        to="/home"
         aria-label="Voltar"
         className="flex h-10 w-10 items-center justify-center rounded-full bg-background/70 backdrop-blur justify-self-start"
       >
