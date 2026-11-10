@@ -297,7 +297,7 @@ function MensagemPage() {
               ref={(el) => {
                 slideRefs.current[idx] = el;
               }}
-              className="snap-start snap-always h-full min-h-full w-full flex flex-col items-center justify-end px-4 sm:px-6 pt-24 pb-4"
+              className="snap-start snap-always h-full min-h-full w-full flex flex-col items-center justify-end px-4 sm:px-6 pt-40 pb-4"
             >
               <div className="relative w-full max-w-md animate-in fade-in duration-500">
                 {mascote && (
@@ -307,7 +307,7 @@ function MensagemPage() {
                     className="pointer-events-none absolute -top-[88px] right-3 z-0 h-[120px] w-auto object-contain drop-shadow-md"
                   />
                 )}
-                <div className="relative z-10 max-h-[calc(100dvh-14rem)] overflow-y-auto no-scrollbar rounded-[28px] bg-background px-6 py-6 text-left shadow-[0_10px_40px_-12px_rgba(0,0,0,0.18)]">
+                <div className="relative z-10 max-h-[calc(100dvh-20rem)] overflow-y-auto no-scrollbar rounded-[28px] bg-background px-6 py-6 text-left shadow-[0_10px_40px_-12px_rgba(0,0,0,0.18)]">
                   <span className="inline-flex h-7 items-center rounded-full bg-tint-lavender px-3 text-[11px] font-bold tracking-[0.15em] uppercase text-ink/70">
                     {sentimento}
                   </span>
