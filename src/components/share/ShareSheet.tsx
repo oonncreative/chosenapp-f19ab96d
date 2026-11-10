@@ -55,6 +55,46 @@ export function ShareSheet({ open, onOpenChange, mensagem, sentimento }: Props) 
       );
       if (Haptics) await Haptics.impact({ style: ImpactStyle.Medium }).catch(() => {});
 
+      // iPhone/WebView: imagens (mascote, céu) às vezes somem na captura.
+      // Convertemos para data URL, esperamos carregar e fazemos uma captura de aquecimento.
+      const node = exportRef.current;
+      const toData = async (url: string) => {
+        if (!url || url.startsWith("data:")) return url;
+        const r = await fetch(url, { cache: "force-cache" });
+        const b = await r.blob();
+        return await new Promise<string>((res, rej) => {
+          const fr = new FileReader();
+          fr.onload = () => res(fr.result as string);
+          fr.onerror = rej;
+          fr.readAsDataURL(b);
+        });
+      };
+      await Promise.all(
+        Array.from(node.querySelectorAll("img")).map(async (img) => {
+          try {
+            const src = img.getAttribute("src") || "";
+            if (src && !src.startsWith("data:")) img.src = await toData(new URL(src, location.href).href);
+            await img.decode().catch(() => {});
+          } catch {}
+        }),
+      );
+      await Promise.all(
+        Array.from(node.querySelectorAll<HTMLElement>("*")).map(async (el) => {
+          const m = el.style.backgroundImage?.match(/url\(["']?([^"')]+)["']?\)/);
+          if (m && !m[1].startsWith("data:")) {
+            try { el.style.backgroundImage = `url("${await toData(new URL(m[1], location.href).href)}")`; } catch {}
+          }
+        }),
+      );
+      const captureOpts = {
+        width,
+        height,
+        pixelRatio: 1,
+        skipFonts: false,
+        fontEmbedCSS: "",
+        style: { visibility: "visible", position: "static", left: "0", top: "0", transform: "none" },
+      };
+      await htmlToImage.toPng(node, captureOpts).catch(() => {});
       const dataUrl = await htmlToImage.toPng(exportRef.current, {
         width,
         height,
