@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useLayoutEffect, useRef, useState } from "react";
 import type { Mensagem } from "@/lib/data";
 import { FORMATS, THEMES, type ShareOptions } from "./themes";
 import { MASCOTE_POR_SENTIMENTO } from "@/lib/mascotes";
