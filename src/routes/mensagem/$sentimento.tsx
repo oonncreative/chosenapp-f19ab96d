@@ -6,6 +6,9 @@ import { Share2, ArrowLeft, Heart, ChevronUp } from "lucide-react";
 import { isFavorite, toggleFavorite, addToHistory } from "@/lib/favorites";
 import { toast } from "sonner";
 import { ShareSheet } from "@/components/share/ShareSheet";
+import { MASCOTE_POR_SENTIMENTO } from "@/lib/mascotes";
+import chosenIcone from "@/assets/chosen-icone.png.asset.json";
+import ceuAmanhecer from "@/assets/ceu-amanhecer.jpg";
 
 function ResumoBlock({ text }: { text: string }) {
   const pRef = useRef<HTMLParagraphElement | null>(null);
@@ -30,10 +33,11 @@ function ResumoBlock({ text }: { text: string }) {
   }, [text]);
 
   return (
-    <div className="mt-8 flex flex-col items-center w-full">
+    <div className="mt-6 flex flex-col items-start w-full border-t border-black/5 pt-5">
+      <h3 className="text-[15px] font-bold text-ink">Para refletir</h3>
       <p
         ref={pRef}
-        className={`chosen-resumo text-sm font-light text-gray-500 w-full max-w-[320px] leading-relaxed transition-all duration-300 break-words ${
+        className={`chosen-resumo mt-2 text-[14px] text-ink/70 w-full leading-relaxed transition-all duration-300 break-words ${
           isExpanded ? "chosen-resumo-expanded" : "line-clamp-4"
         }`}
       >
@@ -42,9 +46,9 @@ function ResumoBlock({ text }: { text: string }) {
       {overflows && (
         <button
           onClick={() => setIsExpanded((v) => !v)}
-          className="mt-2 text-[10px] font-bold tracking-widest uppercase text-gray-400 hover:text-black transition-colors"
+          className="mt-3 h-9 px-5 rounded-full bg-surface text-[13px] font-semibold text-ink/80 active:scale-95 transition-transform"
         >
-          {isExpanded ? "menos" : "mais..."}
+          {isExpanded ? "Menos" : "Mais..."}
         </button>
       )}
     </div>
@@ -230,10 +234,11 @@ function MensagemPage() {
   };
 
   const favAtual = favMap[mensagemAtual.id] ?? false;
+  const mascote = MASCOTE_POR_SENTIMENTO[sentimento];
 
   return (
     <div
-      className="relative flex h-[100dvh] max-h-[100dvh] w-full max-w-[100vw] flex-col overflow-hidden bg-white"
+      className="relative flex h-[100dvh] max-h-[100dvh] w-full max-w-[100vw] flex-col overflow-hidden bg-background"
       style={{
         paddingTop: "max(env(safe-area-inset-top), 2rem)",
       }}
@@ -246,24 +251,32 @@ function MensagemPage() {
         sentimento={sentimento}
       />
 
+      {/* Imagem discreta no topo */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[42%] z-0">
+        <img src={ceuAmanhecer} alt="" className="h-full w-full object-cover opacity-80" width={1024} height={640} />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/30 to-background" />
+      </div>
+
       {/* Header fixo */}
-      <header className="shrink-0 z-20 bg-white grid grid-cols-3 h-14 items-center px-4">
-        <Link 
-          to="/home" 
-          className="flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-gray-100 justify-self-start"
+      <header className="relative shrink-0 z-20 grid grid-cols-[2.5rem_1fr_2.5rem] h-14 items-center px-4">
+        <Link
+          to="/home"
+          aria-label="Voltar"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-background/70 backdrop-blur transition-colors justify-self-start"
         >
-          <ArrowLeft className="h-6 w-6 text-gray-400" />
+          <ArrowLeft className="h-5 w-5 text-ink" />
         </Link>
-        <span className="text-sm font-bold tracking-[0.3em] uppercase text-black text-center">
+        <span className="flex items-center justify-center gap-1.5 text-sm font-bold tracking-[0.3em] uppercase text-brand-olive">
+          <img src={chosenIcone.url} alt="" className="h-6 w-6 object-contain" />
           CHOSEN
         </span>
         <button
           onClick={handleToggleFav}
           aria-label={favAtual ? "Remover dos favoritos" : "Adicionar aos favoritos"}
-          className="flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-gray-100 justify-self-end active:scale-90"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-background/70 backdrop-blur justify-self-end active:scale-90 transition-transform"
         >
           <Heart
-            className={`h-6 w-6 transition-colors ${favAtual ? "fill-red-500 text-red-500" : "text-gray-400"}`}
+            className={`h-5 w-5 transition-colors ${favAtual ? "fill-red-500 text-red-500" : "text-ink"}`}
             strokeWidth={2}
           />
         </button>
@@ -271,46 +284,60 @@ function MensagemPage() {
 
       <main
         ref={scrollerRef}
-        className="flex-1 min-h-0 w-full overflow-y-auto snap-y snap-mandatory no-scrollbar overscroll-contain"
+        className="relative z-10 flex-1 min-h-0 w-full overflow-y-auto snap-y snap-mandatory no-scrollbar overscroll-contain"
         style={{ scrollBehavior: "smooth" }}
       >
-        {feed.map((m, idx) => (
+        {feed.map((m, idx) => {
+          const len = m.texto.length;
+          const tamanho = len < 110 ? "text-[26px] sm:text-3xl" : len < 220 ? "text-[21px] sm:text-2xl" : "text-[18px] sm:text-xl";
+          return (
             <section
               key={`${m.id}-${idx}`}
               data-idx={idx}
               ref={(el) => {
                 slideRefs.current[idx] = el;
               }}
-              className="snap-start snap-always h-full min-h-full w-full flex flex-col items-center justify-center px-4 sm:px-6 py-2 text-center"
+              className="snap-start snap-always h-full min-h-full w-full flex flex-col items-center justify-end px-4 sm:px-6 pt-24 pb-4"
             >
-              <div className="w-full max-w-md animate-in fade-in duration-500 flex flex-col items-center">
-                <p className="text-xl font-light leading-snug text-black sm:text-3xl md:text-4xl tracking-tight break-words cursor-default select-text">
-                  {`"${m.texto}"`}
-                </p>
-                <p className="mt-6 text-[12px] font-bold tracking-[0.2em] uppercase text-black">
-                  {m.referencia}
-                </p>
+              <div className="relative w-full max-w-md animate-in fade-in duration-500">
+                {mascote && (
+                  <img
+                    src={mascote}
+                    alt=""
+                    className="pointer-events-none absolute -top-[88px] right-3 z-0 h-[120px] w-auto object-contain drop-shadow-md"
+                  />
+                )}
+                <div className="relative z-10 max-h-[calc(100dvh-14rem)] overflow-y-auto no-scrollbar rounded-[28px] bg-background px-6 py-6 text-left shadow-[0_10px_40px_-12px_rgba(0,0,0,0.18)]">
+                  <span className="inline-flex h-7 items-center rounded-full bg-tint-lavender px-3 text-[11px] font-bold tracking-[0.15em] uppercase text-ink/70">
+                    {sentimento}
+                  </span>
+                  <p className={`mt-4 font-bold leading-[1.2] tracking-tight text-ink break-words select-text ${tamanho}`}>
+                    {m.texto}
+                  </p>
+                  <p className="mt-3 text-[15px] text-ink/55">{m.referencia}</p>
 
-                {m.resumo && <ResumoBlock text={m.resumo} />}
+                  {m.resumo && <ResumoBlock text={m.resumo} />}
+                </div>
               </div>
             </section>
-          ))}
+          );
+        })}
       </main>
 
       {showHint && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-24 z-10 flex flex-col items-center gap-1 text-gray-400 animate-in fade-in slide-in-from-bottom-2 duration-500">
+        <div className="pointer-events-none absolute inset-x-0 bottom-28 z-30 flex flex-col items-center gap-1 text-gray-400 animate-in fade-in slide-in-from-bottom-2 duration-500">
           <ChevronUp className="h-5 w-5 animate-bounce" />
-          <span className="text-[10px] font-semibold tracking-[0.25em] uppercase">
+          <span className="text-[11px] font-semibold tracking-[0.15em] text-ink/50">
             Arraste para a próxima
           </span>
         </div>
       )}
 
       {/* Footer fixo */}
-      <footer className="shrink-0 z-20 w-full px-4 pt-2 pb-[calc(env(safe-area-inset-bottom)+36px)] bg-white flex items-center justify-center gap-3">
+      <footer className="relative shrink-0 z-20 w-full px-4 pt-2 pb-[calc(env(safe-area-inset-bottom)+36px)] bg-background flex items-center justify-center gap-3">
         <Button
           onClick={handleOpenShare}
-          className="h-12 rounded-full border-none bg-[#f1f26c] text-black hover:opacity-90 shadow-none flex items-center gap-2 px-6 transition-all active:scale-95 disabled:opacity-50"
+          className="h-12 rounded-full border-none bg-brand-yellow text-ink hover:opacity-90 shadow-none flex items-center gap-2 px-6 transition-all active:scale-95 disabled:opacity-50"
         >
           <span className="text-sm font-semibold tracking-wide">Compartilhar</span>
           <Share2 className="h-5 w-5 shrink-0" />
