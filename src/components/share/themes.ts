@@ -23,7 +23,10 @@ export const FORMATS: Record<ShareFormat, { width: number; height: number; label
   horizontal: { width: 1920, height: 1080, label: "Horizontal 16:9" },
 };
 
+export type ShareEstilo = "minimalista" | "moderna";
+
 export interface ShareOptions {
+  estilo: ShareEstilo;
   theme: ShareTheme;
   format: ShareFormat;
   showResumo: boolean;
@@ -36,6 +39,7 @@ export interface ShareOptions {
 }
 
 export const DEFAULT_SHARE_OPTIONS: ShareOptions = {
+  estilo: "minimalista",
   theme: "branco",
   format: "story",
   showResumo: true,
