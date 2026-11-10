@@ -233,3 +233,22 @@
   .mascote-anim, .mascote-enter { animation: none; }
   .mascote-wrap { transition: none; }
 }
+
+@keyframes swipe-hint-card {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  20% { transform: translateX(-14%) rotate(-3deg); }
+  40% { transform: translateX(0) rotate(0); }
+  60% { transform: translateX(10%) rotate(2deg); }
+  80% { transform: translateX(0) rotate(0); }
+}
+@keyframes swipe-hint-hand {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-48px); }
+  50% { transform: translateX(0); }
+  75% { transform: translateX(40px); }
+}
+.swipe-hint-card { animation: swipe-hint-card 1.6s ease-in-out 0.3s 2; }
+.swipe-hint-hand { animation: swipe-hint-hand 1.6s ease-in-out 0.3s 2; }
+@media (prefers-reduced-motion: reduce) {
+  .swipe-hint-card, .swipe-hint-hand { animation: none; }
+}
