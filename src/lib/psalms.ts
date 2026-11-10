@@ -55,7 +55,7 @@ export const NOTIFICATION_TITLES = [
   "Uma luz para o seu caminho",
   "Deus tem algo para você",
   "Respire fundo e ouça",
-  "Tempo de descansar nEle",
+  "Tempo de descansar nele",
   "Uma promessa para hoje",
   "Para o seu coração agora",
   "Pare por um instante",

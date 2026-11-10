@@ -188,7 +188,7 @@ export const DEVOCIONAIS: Devocional[] = [
     versiculo: "Bem-aventurados os que choram, porque eles serão consolados.",
     referencia: "Mateus 5:4",
     dica: "Se veio uma lágrima, deixe cair. Chorar diante de Deus também é oração.",
-    reflexao: "Jesus não disse 'não chore'. Ele chamou de bem-aventurado quem chora, porque só chora quem se importa. E Deus consola quem chora nEle.",
+    reflexao: "Jesus não disse 'não chore'. Ele chamou de bem-aventurado quem chora, porque só chora quem se importa. E Deus consola quem chora nele.",
     pergunta: "Existe uma dor que você não deu espaço pra chorar diante de Deus?",
     oracao: "Pai, choro diante de Ti. Consola o meu coração. Em nome de Jesus, amém.",
   },
