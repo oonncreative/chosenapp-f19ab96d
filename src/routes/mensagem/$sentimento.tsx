@@ -10,7 +10,7 @@ import { MASCOTE_POR_SENTIMENTO } from "@/lib/mascotes";
 import chosenIcone from "@/assets/chosen-icone.png.asset.json";
 import ceuAmanhecer from "@/assets/ceu-amanhecer.jpg";
 
-function ResumoBlock({ text }: { text: string }) {
+function ResumoBlock({ text, onExpandedChange }: { text: string; onExpandedChange?: (v: boolean) => void }) {
   const pRef = useRef<HTMLParagraphElement | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   useEffect(() => { onExpandedChange?.(isExpanded); }, [isExpanded, onExpandedChange]);
@@ -335,6 +335,12 @@ function MensagemPage() {
             Arraste para a próxima
           </span>
         </div>
+      )}
+
+      {lendo && (
+        <p className="relative z-20 shrink-0 bg-background pt-1 text-center text-[11px] font-semibold text-ink/50">
+          Modo leitura · toque em “Menos” para mudar de frase
+        </p>
       )}
 
       {/* Footer fixo */}
