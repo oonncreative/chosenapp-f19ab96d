@@ -346,12 +346,17 @@ function SwipeView({ navigate }: { navigate: NavFn }) {
   const startX = useRef<number | null>(null);
   const deltaX = useRef(0);
   const [drag, setDrag] = useState(0);
+  const [hint, setHint] = useState(true);
+  useEffect(() => {
+    const t = setTimeout(() => setHint(false), 3200);
+    return () => clearTimeout(t);
+  }, []);
 
   const total = CATEGORIAS.length;
   const prev = () => { void triggerHaptic(); setIndex((i) => (i - 1 + total) % total); };
   const next = () => { void triggerHaptic(); setIndex((i) => (i + 1) % total); };
 
-  const onStart = (x: number) => { startX.current = x; deltaX.current = 0; };
+  const onStart = (x: number) => { setHint(false); startX.current = x; deltaX.current = 0; };
   const onMove = (x: number) => {
     if (startX.current === null) return;
     deltaX.current = x - startX.current;
@@ -365,9 +370,9 @@ function SwipeView({ navigate }: { navigate: NavFn }) {
   };
 
   return (
-    <section className="flex-1 min-h-0 flex flex-col items-center justify-center px-4 sm:px-6 pb-6 pt-2 select-none w-full">
+    <section className="flex-1 min-h-0 flex flex-col items-center justify-center px-4 sm:px-6 pb-24 pt-2 select-none w-full">
       <div
-        className="relative w-full max-w-sm h-[clamp(320px,60vh,440px)]"
+        className="relative w-full max-w-sm h-[clamp(340px,56vh,480px)]"
         onTouchStart={(e) => onStart(e.touches[0].clientX)}
         onTouchMove={(e) => onMove(e.touches[0].clientX)}
         onTouchEnd={onEnd}
@@ -380,30 +385,38 @@ function SwipeView({ navigate }: { navigate: NavFn }) {
           const offset = i - index;
           if (Math.abs(offset) > 1) return null;
           const translate = offset * 100 + (drag / 4);
+          const rotate = offset === 0 ? drag / 40 : 0;
           const scale = offset === 0 ? 1 : 0.9;
           const opacity = offset === 0 ? 1 : 0.4;
           return (
             <div
               key={sentimento}
               className="absolute inset-0 transition-transform duration-300 ease-out"
-              style={{ transform: `translateX(${translate}%) scale(${scale})`, opacity, transitionDuration: startX.current !== null ? "0ms" : "300ms" }}
+              style={{ transform: `translateX(${translate}%) scale(${scale}) rotate(${rotate}deg)`, opacity, transitionDuration: startX.current !== null ? "0ms" : "300ms" }}
             >
               <button
                 onClick={() => offset === 0 && goTo(navigate, sentimento)}
-                className="w-full h-full rounded-[32px] bg-tint-yellow flex flex-col items-center justify-center gap-4 sm:gap-6 p-6 sm:p-8 active:scale-[0.98] transition-transform"
+                className={`relative w-full h-full overflow-hidden rounded-[32px] bg-tint-yellow flex flex-col items-center justify-end p-5 shadow-[0_18px_40px_-18px_rgba(0,0,0,0.25)] active:scale-[0.98] transition-transform ${offset === 0 && hint ? "swipe-hint-card" : ""}`}
               >
-                <div className="mascote-wrap w-[52vw] max-w-52 aspect-square flex items-center justify-center">
+                <div aria-hidden className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 h-[75%] aspect-square rounded-full bg-background/50 blur-2xl" />
+                <div className="mascote-wrap relative flex-1 min-h-0 w-full flex items-end justify-center">
                   <img
                     src={MASCOTES[sentimento]}
                     alt={sentimento}
-                    className={`w-full h-full object-contain ${offset === 0 ? "mascote-anim" : ""}`}
+                    className={`h-full max-h-full w-auto object-contain drop-shadow-xl ${offset === 0 ? "mascote-anim" : ""}`}
                   />
                 </div>
-                <span className="text-xl sm:text-2xl font-bold tracking-tight text-ink text-center break-words">{sentimento}</span>
+                <span className="relative mt-2 rounded-full bg-background/80 backdrop-blur px-5 py-2 text-xl font-bold tracking-tight text-ink text-center break-words">{sentimento}</span>
               </button>
             </div>
           );
         })}
+        {hint && (
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-20 z-10 flex flex-col items-center gap-2 animate-in fade-in duration-300">
+            <div className="swipe-hint-hand flex h-12 w-12 items-center justify-center rounded-full bg-ink/80 text-2xl shadow-lg">👆</div>
+            <span className="rounded-full bg-ink/80 px-3 py-1 text-[12px] font-semibold text-background">Arraste para o lado</span>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center gap-6 mt-6">
