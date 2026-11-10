@@ -208,10 +208,53 @@ const ModernaCanvas = forwardRef<HTMLDivElement, Props>(function ModernaCanvas(
   const mascote = options.mascoteUrl ?? (sentimento ? MASCOTE_POR_SENTIMENTO[sentimento] : null);
   const tf = 1 - (options.textScale ?? 0) * 0.12;
   const len = mensagem.texto.length;
-  const textSize = Math.round((len < 110 ? 64 : len < 220 ? 52 : 44) * scale * tf);
+  const baseText = len < 110 ? 64 : len < 220 ? 52 : 44;
   const mascH = Math.round(260 * scale);
   const showResumo = options.showResumo && !!mensagem.resumo && !isH;
   const ink = "#1c1c1c";
+
+  // Reduz a letra até a reflexão inteira caber no cartão — sem cortar com "...".
+  const [fit, setFit] = useState(1);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const passes = useRef(0);
+  const deps = [
+    options.format,
+    options.showResumo,
+    options.showRef,
+    options.textScale,
+    options.mascoteUrl,
+    options.signature,
+    options.showFooter,
+    sentimento,
+    mensagem.texto,
+    mensagem.resumo,
+  ];
+
+  useLayoutEffect(() => {
+    passes.current = 0;
+    setFit(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps);
+
+  useLayoutEffect(() => {
+    const wrap = wrapRef.current;
+    const card = cardRef.current;
+    if (!wrap || !card) return;
+    const cs = getComputedStyle(wrap);
+    const avail = wrap.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    const need = card.offsetHeight;
+    if (need <= avail + 1 || passes.current >= 10) return;
+    passes.current += 1;
+    const ratio = Math.max(0.5, Math.min(0.97, avail / need));
+    setFit((f) => Math.max(0.5, +(f * ratio).toFixed(3)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fit, ...deps]);
+
+  const textSize = Math.round(baseText * scale * tf * (fit < 0.9 ? 0.94 : 1));
+  const resumoSize = Math.max(16, Math.round(27 * scale * (fit < 0.97 ? fit : 1)));
+  const cardPadY = Math.round((fit < 0.85 ? 44 : 64) * scale);
+
   return (
     <div
       ref={ref}
