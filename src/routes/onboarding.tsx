@@ -1,3 +1,4 @@
+import chosenIcone from "@/assets/chosen-icone.png.asset.json";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -66,7 +67,10 @@ function Onboarding() {
       </div>
       <div className="w-full max-w-sm flex flex-col items-center justify-between h-full py-20">
         <div className="flex-1 flex flex-col items-center justify-center gap-8">
-          <img src="/logo-chosen.png" alt="Chosen" className="h-32 w-32 mb-4 object-contain" />
+          <div className="flex items-center gap-2.5 mb-4">
+            <img src={chosenIcone.url} alt="" className="h-16 w-16 object-contain" />
+            <span className="text-3xl font-bold tracking-tight text-brand-olive">CHOSEN</span>
+          </div>
           
           {step === 1 && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 flex flex-col items-center gap-4">

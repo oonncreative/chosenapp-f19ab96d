@@ -98,10 +98,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:description", content: "Inspirações - Escolhidas!" },
       { property: "og:url", content: "https://chosen.oonn.com.br/" },
       { property: "og:site_name", content: "CHOSEN" },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/cQ3LdAZ4F1OJOqZtAeLy2hzMmwS2/social-images/social-1783177064338-Post_OONN_-_Imagem_para_Carrossel_APP.webp" },
+      { property: "og:image", content: "https://chosen.oonn.com.br/og-chosen.jpg?v=2" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/cQ3LdAZ4F1OJOqZtAeLy2hzMmwS2/social-images/social-1783177064338-Post_OONN_-_Imagem_para_Carrossel_APP.webp" },
+      { name: "twitter:image", content: "https://chosen.oonn.com.br/og-chosen.jpg?v=2" },
       { name: "theme-color", content: "#ffffff" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
@@ -112,11 +112,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "icon",
         type: "image/png",
-        href: "/icon-192.png",
+        sizes: "64x64",
+        href: "/favicon.png?v=2",
+      },
+      {
+        rel: "icon",
+        sizes: "any",
+        href: "/favicon.ico?v=2",
       },
       {
         rel: "apple-touch-icon",
-        href: "/icon-192.png",
+        sizes: "180x180",
+        href: "/apple-touch-icon.png?v=2",
       },
       {
         rel: "manifest",

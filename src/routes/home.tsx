@@ -1,3 +1,4 @@
+import chosenIcone from "@/assets/chosen-icone.png.asset.json";
 import { AppFooter } from "@/components/AppFooter";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Shuffle, List, GalleryHorizontal, Vibrate, VibrateOff, Heart, MoreHorizontal, X, Search } from "lucide-react";
@@ -103,7 +104,7 @@ function HomePage() {
     <div className="h-[100dvh] overflow-hidden bg-white flex flex-col w-full max-w-[100vw]">
       <header className="px-4 sm:px-6 pt-[max(env(safe-area-inset-top),2rem)] pb-2 flex flex-col gap-3 shrink-0 bg-white z-20">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
-          <h1 className="truncate text-sm sm:text-base font-bold tracking-[0.4em] text-black uppercase">CHOSEN</h1>
+          <h1 className="flex items-center gap-2 truncate text-sm sm:text-base font-bold tracking-[0.4em] text-brand-olive uppercase"><img src={chosenIcone.url} alt="" className="h-7 w-7 shrink-0 object-contain" />CHOSEN</h1>
           
           <div className="flex items-center gap-0 shrink-0">
             <div

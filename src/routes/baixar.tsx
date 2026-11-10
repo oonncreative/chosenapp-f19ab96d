@@ -7,7 +7,7 @@ import {
   detectarPlataforma,
   type Plataforma,
 } from "@/lib/storeLinks";
-import logo from "@/assets/chosen-logo.png.asset.json";
+import logo from "@/assets/chosen-icone.png.asset.json";
 
 export const Route = createFileRoute("/baixar")({
   head: () => ({
@@ -25,14 +25,14 @@ export const Route = createFileRoute("/baixar")({
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${SITE_URL}/baixar` },
-      { property: "og:image", content: `${SITE_URL}/og-chosen.jpg` },
+      { property: "og:image", content: `${SITE_URL}/og-chosen.jpg?v=2` },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Baixar o Chosen" },
       {
         name: "twitter:description",
         content: "Versículos, orações e motivação pra cada momento do seu dia.",
       },
-      { name: "twitter:image", content: `${SITE_URL}/og-chosen.jpg` },
+      { name: "twitter:image", content: `${SITE_URL}/og-chosen.jpg?v=2` },
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/baixar` }],
   }),
@@ -76,7 +76,7 @@ function Baixar() {
           alt="Logo do Chosen"
           className="h-20 w-20 rounded-3xl object-contain"
         />
-        <h1 className="mt-5 text-3xl font-semibold uppercase tracking-tight text-foreground">
+        <h1 className="mt-5 text-3xl font-bold uppercase tracking-tight text-brand-olive">
           Chosen
         </h1>
         <p className="mt-3 max-w-xs text-[15px] leading-relaxed text-foreground/60">
