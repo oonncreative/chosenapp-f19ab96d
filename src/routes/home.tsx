@@ -57,6 +57,16 @@ function HomePage() {
     }
   };
 
+  const surprise = () => {
+    void triggerHaptic();
+    const { categoria, id } = getRandomMensagemGlobal();
+    navigate({
+      to: "/mensagem/$sentimento",
+      params: { sentimento: categoria },
+      search: { color: "#f1f26c", id },
+    });
+  };
+
   const handleToggleShake = async () => {
     if (shakeOn) {
       setShakeEnabled(false);
@@ -185,7 +195,7 @@ function HomePage() {
           )}
         </label>
 
-        <div className={`flex justify-center ${searchOpen && searchQuery.trim() ? "hidden" : ""}`}>
+        <div className={`flex flex-wrap items-center justify-center gap-2 ${searchOpen && searchQuery.trim() ? "hidden" : ""}`}>
           <div role="tablist" className="inline-flex p-1 rounded-full bg-surface border border-black/5">
             {([
               { key: "list" as const, icon: List, label: "Lista" },
@@ -205,6 +215,14 @@ function HomePage() {
               </button>
             ))}
           </div>
+          <button
+            onClick={surprise}
+            title="Abrir uma mensagem surpresa"
+            className="flex items-center gap-1.5 h-10 px-4 rounded-full bg-tint-yellow border border-black/5 text-[13px] font-semibold text-ink shadow-sm active:scale-95 transition-transform"
+          >
+            <Shuffle className="h-3.5 w-3.5" strokeWidth={2.25} />
+            Surpresa
+          </button>
         </div>
       </header>
 
@@ -396,8 +414,14 @@ function SwipeView({ navigate }: { navigate: NavFn }) {
             >
               <button
                 onClick={() => offset === 0 && goTo(navigate, sentimento)}
-                className={`relative w-full h-full overflow-hidden rounded-[32px] bg-tint-yellow flex flex-col items-center justify-end p-5 shadow-[0_18px_40px_-18px_rgba(0,0,0,0.25)] active:scale-[0.98] transition-transform ${offset === 0 && hint ? "swipe-hint-card" : ""}`}
+                className={`relative w-full h-full overflow-hidden rounded-[32px] bg-tint-yellow flex flex-col items-center justify-end p-5 pl-11 shadow-[0_18px_40px_-18px_rgba(0,0,0,0.25)] active:scale-[0.98] transition-transform ${offset === 0 && hint ? "swipe-hint-card" : ""}`}
               >
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 rotate-180 text-[11px] font-semibold uppercase tracking-[0.28em] text-ink/45 [writing-mode:vertical-rl] whitespace-nowrap"
+                >
+                  {sentimento}
+                </span>
                 <div aria-hidden className="absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2 h-[75%] aspect-square rounded-full bg-background/50 blur-2xl" />
                 <div className="mascote-wrap relative flex-1 min-h-0 w-full flex items-end justify-center">
                   <img
@@ -406,7 +430,6 @@ function SwipeView({ navigate }: { navigate: NavFn }) {
                     className={`h-full max-h-full w-auto object-contain drop-shadow-xl ${offset === 0 ? "mascote-anim" : ""}`}
                   />
                 </div>
-                <span className="relative mt-2 rounded-full bg-background/80 backdrop-blur px-5 py-2 text-xl font-bold tracking-tight text-ink text-center break-words">{sentimento}</span>
               </button>
             </div>
           );
