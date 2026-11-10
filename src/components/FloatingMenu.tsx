@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useRouterState } from "@tanstack/react-router";
-import { Menu, Plus, RefreshCw, Sparkles, CalendarClock, Share2, HelpCircle, Trash2, Heart, Send, Smile, Shuffle, BellRing, Wind, Copy, Check, PlayCircle, Bell, Clock, BookOpen, HandHeart, Sun, Search } from "lucide-react";
+import { ChevronRight, Menu, Plus, RefreshCw, Sparkles, CalendarClock, Share2, HelpCircle, Trash2, Heart, Send, Smile, Shuffle, BellRing, Wind, Copy, Check, PlayCircle, Bell, Clock, BookOpen, HandHeart, Sun, Search } from "lucide-react";
 import { toast } from "sonner";
+import nuvensLavanda from "@/assets/nuvens-lavanda.jpg";
+import mascotePaz from "@/assets/mascotes/mascote-2.png.asset.json";
 import {
   Sheet,
   SheetContent,
@@ -246,16 +248,54 @@ export function FloatingMenu() {
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent
           side="bottom"
-          className="rounded-t-3xl border-0 pb-[max(env(safe-area-inset-bottom),1.5rem)]"
+          className="rounded-t-[32px] border-0 max-h-[92dvh] overflow-y-auto px-5 pb-[max(env(safe-area-inset-bottom),1.5rem)]"
         >
           <SheetHeader className="text-left">
-            <SheetTitle className="text-base font-light tracking-[0.3em] uppercase">
-              Menu
+            <span className="text-[11px] font-semibold tracking-[0.25em] uppercase text-ink/50">Menu</span>
+            <SheetTitle className="text-[26px] leading-tight font-bold tracking-tight text-ink">
+              Seu momento com Deus
             </SheetTitle>
             <SheetDescription className="sr-only">Opções do app</SheetDescription>
           </SheetHeader>
 
-          <div className="mt-2 flex flex-col">
+          <button
+            onClick={() => { setOpen(false); navigate({ to: "/ora-comigo" }); }}
+            className="relative mt-10 w-full min-h-[132px] rounded-[26px] text-left active:scale-[0.98] transition-transform"
+          >
+            <div className="absolute inset-0 overflow-hidden rounded-[26px]">
+              <img src={nuvensLavanda} alt="" className="h-full w-full object-cover" width={1024} height={640} loading="lazy" />
+              <div className="absolute inset-0 bg-gradient-to-r from-tint-lavender via-tint-lavender/80 to-transparent" />
+            </div>
+            <div className="relative z-10 flex w-[60%] flex-col p-5">
+              <span className="text-[22px] font-bold leading-none tracking-tight text-ink">Ora comigo</span>
+              <span className="mt-1 text-[13px] font-semibold text-ink/70">(guiado)</span>
+              <span className="mt-2 text-[12px] leading-snug text-ink/65">Converse com Deus em todos os momentos.</span>
+            </div>
+            <img
+              src={mascotePaz.url}
+              alt=""
+              className="pointer-events-none absolute -top-10 right-1 h-[150%] max-h-[190px] w-auto object-contain drop-shadow-md"
+            />
+          </button>
+
+          <div className="mt-3 grid grid-cols-3 gap-2.5">
+            {[
+              { icon: <Sparkles className="h-5 w-5" />, label: "Orações", onClick: handleOracoes },
+              { icon: <BookOpen className="h-5 w-5" />, label: "Devocional de 3 min", onClick: () => { setOpen(false); navigate({ to: "/devocional" }); } },
+              { icon: <Clock className="h-5 w-5" />, label: "Quanto tempo você tem?", onClick: () => { setOpen(false); navigate({ to: "/meutempo" }); } },
+            ].map((c) => (
+              <button
+                key={c.label}
+                onClick={c.onClick}
+                className="flex min-h-[96px] flex-col justify-between rounded-[20px] bg-surface p-3 text-left active:scale-[0.97] transition-transform"
+              >
+                <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-brand-yellow text-ink">{c.icon}</span>
+                <span className="text-[12.5px] font-semibold leading-tight text-ink">{c.label}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-4 flex flex-col">
             <MenuItem
               icon={<Search className="h-5 w-5" />}
               label="Ler Bíblia"
@@ -265,22 +305,6 @@ export function FloatingMenu() {
               icon={<BookOpen className="h-5 w-5" />}
               label="Bíblia — Novo Testamento"
               onClick={() => { setOpen(false); navigate({ to: "/biblia" }); }}
-            />
-            <MenuItem icon={<Sparkles className="h-5 w-5" />} label="Orações" onClick={handleOracoes} />
-            <MenuItem
-              icon={<HandHeart className="h-5 w-5" />}
-              label="Ora comigo (guiado)"
-              onClick={() => { setOpen(false); navigate({ to: "/ora-comigo" }); }}
-            />
-            <MenuItem
-              icon={<BookOpen className="h-5 w-5" />}
-              label="Devocional de 3 min"
-              onClick={() => { setOpen(false); navigate({ to: "/devocional" }); }}
-            />
-            <MenuItem
-              icon={<Clock className="h-5 w-5" />}
-              label="Quanto tempo você tem?"
-              onClick={() => { setOpen(false); navigate({ to: "/meutempo" }); }}
             />
             <MenuItem
               icon={<Heart className="h-5 w-5" />}
@@ -368,10 +392,11 @@ function MenuItem({
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-3 w-full px-2 py-2.5 text-left rounded-lg active:bg-black/5 transition-colors"
+      className="flex items-center gap-3 w-full px-1 py-3 text-left border-b border-black/5 last:border-b-0 active:bg-black/5 transition-colors"
     >
-      <span className="shrink-0 text-black [&>svg]:h-[18px] [&>svg]:w-[18px]">{icon}</span>
-      <span className="text-[13px] text-black">{label}</span>
+      <span className="shrink-0 text-ink/80 [&>svg]:h-[19px] [&>svg]:w-[19px]">{icon}</span>
+      <span className="flex-1 text-[14px] text-ink">{label}</span>
+      <ChevronRight className="h-4 w-4 shrink-0 text-ink/30" />
     </button>
   );
 }
