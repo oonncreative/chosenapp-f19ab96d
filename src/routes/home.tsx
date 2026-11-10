@@ -8,6 +8,7 @@ import { isShakeEnabled, setShakeEnabled, requestShakePermission } from "@/hooks
 import { searchMensagens, type SearchHit } from "@/lib/searchMensagens";
 import { toast } from "sonner";
 import { MASCOTE_POR_SENTIMENTO } from "@/lib/mascotes";
+import { getPalavraDoDia } from "@/lib/palavraDoDia";
 
 const triggerHaptic = async () => {
   try {
@@ -25,6 +26,7 @@ const MASCOTES = MASCOTE_POR_SENTIMENTO;
 
 function HomePage() {
   const navigate = useNavigate();
+  const palavra = getPalavraDoDia();
 
   const [viewMode, setViewMode] = useState<"list" | "swipe">(() => {
     if (typeof window === "undefined") return "swipe";
@@ -171,6 +173,23 @@ function HomePage() {
           <h2 className="text-[28px] leading-[1.1] font-bold tracking-tight text-ink">Como está seu coração?</h2>
           <p className="mt-1 text-sm text-ink/60">Escolha seu momento.</p>
         </div>
+
+        <Link
+          to="/biblia/$livro/$capitulo"
+          params={{ livro: palavra.livro, capitulo: String(palavra.capitulo) }}
+          hash={`v${palavra.versiculo}`}
+          className={`block rounded-2xl bg-surface border border-black/5 px-4 py-3 active:scale-[0.99] transition ${searchOpen && searchQuery.trim() ? "hidden" : ""}`}
+        >
+          <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-ink/50">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary" style={{ background: "#f1f26c" }} />
+            Palavra do dia · {palavra.referencia}
+          </span>
+          <span className="mt-1 block text-[14px] leading-snug text-ink line-clamp-2">“{palavra.texto}”</span>
+          <span className="mt-1 flex items-center justify-between text-[12px] text-ink/55">
+            <span className="truncate">{palavra.acolhimento}</span>
+            <ChevronRight className="h-4 w-4 shrink-0" />
+          </span>
+        </Link>
 
         <label className="mt-1 flex items-center gap-2 h-12 px-4 rounded-full bg-surface border border-black/5 focus-within:border-ink/30 transition-colors">
           <Search className="h-4 w-4 text-ink/50 shrink-0" strokeWidth={2} />

@@ -23,6 +23,19 @@ import {
   toggleMarcadorManual,
   type Marcador,
 } from "@/lib/biblia/marcador";
+import {
+  CORES_GRIFO,
+  FONTE_MAX,
+  FONTE_MIN,
+  TEMAS,
+  getPrefs,
+  grifar,
+  grifosDoCapitulo,
+  setPrefs,
+  type CorGrifo,
+  type Prefs,
+  type TemaLeitura,
+} from "@/lib/biblia/leitura";
 
 // Monta a referência no formato "Mateus 1:1", "Mateus 1:1-3" ou "Mateus 1:1,4".
 function montarReferencia(nome: string, cap: number, versos: number[]): string {
@@ -81,6 +94,32 @@ function LeituraPage() {
   const [selecionados, setSelecionados] = useState<number[]>([]);
   const [shareOpen, setShareOpen] = useState(false);
   const scrollRef = useRef<HTMLElement | null>(null);
+  const [prefs, setPrefsState] = useState<Prefs>({ fonte: 17, tema: "claro" });
+  const [grifos, setGrifos] = useState<Record<number, CorGrifo>>({});
+  useEffect(() => setPrefsState(getPrefs()), []);
+  useEffect(() => setGrifos(grifosDoCapitulo(livro.slug, cap)), [livro.slug, cap]);
+  const atualizarPrefs = (p: Prefs) => {
+    setPrefsState(p);
+    setPrefs(p);
+  };
+  const tema = TEMAS[prefs.tema];
+  const ordemTemas: TemaLeitura[] = ["claro", "sepia", "noturno"];
+  const aplicarGrifo = (cor: CorGrifo | null) => {
+    if (!versiculos) return;
+    grifar(
+      selecionados.map((n) => ({
+        livro: livro.slug,
+        nome: livro.nome,
+        capitulo: cap,
+        versiculo: n,
+        texto: versiculos[n - 1] ?? "",
+      })),
+      cor,
+    );
+    setGrifos(grifosDoCapitulo(livro.slug, cap));
+    setSelecionados([]);
+    toast(cor ? "Versículo grifado" : "Grifo removido");
+  };
 
   useEffect(() => {
     let vivo = true;
@@ -250,7 +289,10 @@ function LeituraPage() {
   }, [versiculos, selecionados, referenciaSelecao, livro.slug, cap]);
 
   return (
-    <div className="flex flex-col h-[100dvh] bg-white">
+    <div
+      className={`flex flex-col h-[100dvh] transition-colors ${prefs.tema === "noturno" ? "[&_.text-black]:!text-[#e8e6e1] [&_[class*='text-black/']]:!text-[#e8e6e1]/60" : ""}`}
+      style={{ background: tema.bg, color: tema.fg }}
+    >
       <header className="shrink-0 px-4 pt-[max(env(safe-area-inset-top),2rem)] pb-2">
         <div className="grid grid-cols-3 items-center">
           <Link
@@ -276,6 +318,42 @@ function LeituraPage() {
             {lido ? "Lido" : "Lido?"}
           </button>
         </div>
+        <div className="mt-2 flex items-center justify-center gap-2" role="group" aria-label="Ajustes de leitura">
+          <button
+            onClick={() => atualizarPrefs({ ...prefs, fonte: Math.max(FONTE_MIN, prefs.fonte - 1) })}
+            disabled={prefs.fonte <= FONTE_MIN}
+            aria-label="Diminuir letra"
+            className="h-8 w-10 rounded-full bg-black/[0.06] text-[12px] font-semibold disabled:opacity-30"
+            style={{ color: tema.fg }}
+          >
+            A-
+          </button>
+          <button
+            onClick={() => atualizarPrefs({ ...prefs, fonte: Math.min(FONTE_MAX, prefs.fonte + 1) })}
+            disabled={prefs.fonte >= FONTE_MAX}
+            aria-label="Aumentar letra"
+            className="h-8 w-10 rounded-full bg-black/[0.06] text-[15px] font-semibold disabled:opacity-30"
+            style={{ color: tema.fg }}
+          >
+            A+
+          </button>
+          <div className="flex items-center gap-1 rounded-full bg-black/[0.06] p-1">
+            {ordemTemas.map((t) => (
+              <button
+                key={t}
+                onClick={() => atualizarPrefs({ ...prefs, tema: t })}
+                aria-pressed={prefs.tema === t}
+                aria-label={`Tema ${TEMAS[t].label}`}
+                className={`h-6 rounded-full px-2.5 text-[11px] font-medium transition ${
+                  prefs.tema === t ? "ring-2 ring-[#f1f26c]" : ""
+                }`}
+                style={{ background: TEMAS[t].bg, color: TEMAS[t].fg }}
+              >
+                {TEMAS[t].label}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="mt-2 h-0.5 w-full rounded-full bg-black/5">
           <div
             className="h-0.5 rounded-full bg-[#f1f26c] transition-all duration-300"
@@ -293,8 +371,8 @@ function LeituraPage() {
             Texto completo · Almeida Atualizada
           </p>
           <p className="text-[11px] text-black/40 mb-3">
-            Toque no número do versículo para marcar onde parou. Toque no texto para selecionar e
-            compartilhar (ex.: {livro.nome} {cap}:1).
+            Toque no número do versículo para marcar onde parou. Toque no texto para selecionar,
+            grifar ou compartilhar (ex.: {livro.nome} {cap}:1).
           </p>
 
           {manual && manual.livro === livro.slug && manual.capitulo === cap && (
@@ -331,8 +409,9 @@ function LeituraPage() {
                     id={`v${n}`}
                     data-versiculo={n}
                     className={`flex items-start gap-3 rounded-xl -mx-2 px-2 py-1 transition-colors ${
-                      sel ? "bg-[#f1f26c]" : ativo ? "bg-[#f1f26c]/50" : ""
+                      sel ? "bg-[#f1f26c] [&_*]:!text-black" : ativo ? "bg-[#f1f26c]/50" : ""
                     }`}
+                    style={!sel && !ativo && grifos[n] ? { background: CORES_GRIFO[grifos[n]], color: "#111" } : undefined}
                   >
                     <button
                       onClick={() => marcar(n)}
@@ -347,7 +426,10 @@ function LeituraPage() {
                       aria-label={`Selecionar ${livro.nome} ${cap}:${n} para compartilhar`}
                       className="flex-1 text-left"
                     >
-                      <span className="block text-[16px] leading-relaxed text-black font-light">
+                      <span
+                        className="block leading-[1.75] font-light"
+                        style={{ fontSize: prefs.fonte, color: sel || grifos[n] ? "#111" : tema.fg }}
+                      >
                         {texto}
                       </span>
                       {sel && (
@@ -365,9 +447,32 @@ function LeituraPage() {
       </main>
 
       <div
-        className="shrink-0 border-t border-black/5 bg-white px-4 pt-3"
-        style={{ paddingBottom: "calc(max(env(safe-area-inset-bottom), 0.5rem) + 4.75rem)" }}
+        className="shrink-0 border-t border-black/5 px-4 pt-3"
+        style={{ background: tema.bg, paddingBottom: "calc(max(env(safe-area-inset-bottom), 0.5rem) + 4.75rem)" }}
       >
+        {selecionados.length > 0 && (
+          <div className="mx-auto mb-2 flex w-full max-w-md items-center justify-center gap-2">
+            <span className="text-[11px] font-medium" style={{ color: tema.sub }}>Grifar:</span>
+            {(Object.keys(CORES_GRIFO) as CorGrifo[]).map((c) => (
+              <button
+                key={c}
+                onClick={() => aplicarGrifo(c)}
+                aria-label={`Grifar de ${c}`}
+                className="h-8 w-8 rounded-full ring-1 ring-black/10 active:scale-90 transition"
+                style={{ background: CORES_GRIFO[c] }}
+              />
+            ))}
+            {selecionados.some((n) => grifos[n]) && (
+              <button
+                onClick={() => aplicarGrifo(null)}
+                className="h-8 rounded-full bg-black/[0.06] px-3 text-[11px] font-medium"
+                style={{ color: tema.fg }}
+              >
+                Remover grifo
+              </button>
+            )}
+          </div>
+        )}
         {selecionados.length > 0 && (
           <div className="mx-auto mb-2 flex w-full max-w-md items-center gap-2 rounded-2xl bg-black px-3 py-2">
             <span className="flex-1 min-w-0 truncate text-[12px] font-medium text-white">

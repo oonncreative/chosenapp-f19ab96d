@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Search, ChevronRight, Loader2, X } from "lucide-react";
 import { ChosenBackdrop, ChosenHeader } from "@/components/ChosenBackdrop";
 import { LIVROS_AT, LIVROS_NT } from "@/lib/biblia";
+import { CORES_GRIFO, getGrifos, type Grifo } from "@/lib/biblia/leitura";
 import { buscarTexto, interpretarReferencia, type Resultado } from "@/lib/biblia/busca";
 
 export const Route = createFileRoute("/ler-biblia")({
@@ -61,7 +62,9 @@ function destacar(texto: string, consulta: string) {
 
 function LerBiblia() {
   const navigate = useNavigate();
-  const [aba, setAba] = useState<"at" | "nt">("at");
+  const [aba, setAba] = useState<"at" | "nt" | "grifos">("at");
+  const [grifos, setGrifos] = useState<Grifo[]>([]);
+  useEffect(() => setGrifos(getGrifos()), []);
   const [q, setQ] = useState("");
   const [busca, setBusca] = useState("");
   const [resultados, setResultados] = useState<Resultado[] | null>(null);
@@ -100,7 +103,7 @@ function LerBiblia() {
     }
   }, [q]);
 
-  const lista = aba === "at" ? LIVROS_AT : LIVROS_NT;
+  const lista = aba === "at" ? LIVROS_AT : aba === "nt" ? LIVROS_NT : [];
 
   return (
     <div className="relative flex flex-col h-[100dvh] overflow-hidden bg-background">
@@ -208,8 +211,8 @@ function LerBiblia() {
 
           {!q.trim() && (
             <>
-              <div className="mt-6 grid grid-cols-2 rounded-full bg-muted p-1">
-                {(["at", "nt"] as const).map((t) => (
+              <div className="mt-6 grid grid-cols-3 rounded-full bg-muted p-1">
+                {(["at", "nt", "grifos"] as const).map((t) => (
                   <button
                     key={t}
                     onClick={() => setAba(t)}
@@ -217,10 +220,34 @@ function LerBiblia() {
                       aba === t ? "bg-brand-yellow text-ink shadow-sm" : "text-ink/50"
                     }`}
                   >
-                    {t === "at" ? "Antigo Testamento" : "Novo Testamento"}
+                    {t === "at" ? "Antigo" : t === "nt" ? "Novo" : `Grifados${grifos.length ? ` (${grifos.length})` : ""}`}
                   </button>
                 ))}
               </div>
+              {aba === "grifos" && (
+                <ul className="mt-4 flex flex-col gap-2">
+                  {grifos.length === 0 && (
+                    <li className="rounded-2xl bg-muted/60 px-4 py-5 text-center text-[13px] text-ink/55">
+                      Nenhum versículo grifado ainda. Ao ler um capítulo, toque no texto e escolha uma cor.
+                    </li>
+                  )}
+                  {grifos.map((g) => (
+                    <li key={`${g.livro}-${g.capitulo}-${g.versiculo}`}>
+                      <button
+                        onClick={() => irPara(g.livro, g.capitulo, g.versiculo)}
+                        className="w-full text-left rounded-2xl px-4 py-3 active:scale-[0.99] transition"
+                        style={{ background: CORES_GRIFO[g.cor] }}
+                      >
+                        <span className="block text-[11px] font-bold uppercase tracking-wider text-black/60">
+                          {g.nome} {g.capitulo}:{g.versiculo}
+                        </span>
+                        <span className="mt-1 block text-[14px] leading-snug text-black">{g.texto}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {aba !== "grifos" && (<>
               <p className="mt-3 text-[12px] text-gray-400 text-center">
                 {lista.length} livros · Texto completo · Almeida Atualizada
               </p>
@@ -245,6 +272,7 @@ function LerBiblia() {
                   </li>
                 ))}
               </ul>
+              </>)}
             </>
           )}
           </div>
