@@ -370,9 +370,9 @@ function SwipeView({ navigate }: { navigate: NavFn }) {
   };
 
   return (
-    <section className="flex-1 min-h-0 flex flex-col items-center justify-center px-4 sm:px-6 pb-6 pt-2 select-none w-full">
+    <section className="flex-1 min-h-0 flex flex-col items-center justify-center px-4 sm:px-6 pb-24 pt-2 select-none w-full">
       <div
-        className="relative w-full max-w-sm h-[clamp(360px,64vh,500px)]"
+        className="relative w-full max-w-sm h-[clamp(340px,56vh,480px)]"
         onTouchStart={(e) => onStart(e.touches[0].clientX)}
         onTouchMove={(e) => onMove(e.touches[0].clientX)}
         onTouchEnd={onEnd}
@@ -412,7 +412,7 @@ function SwipeView({ navigate }: { navigate: NavFn }) {
           );
         })}
         {hint && (
-          <div aria-hidden className="pointer-events-none absolute inset-x-0 top-6 z-10 flex flex-col items-center gap-2 animate-in fade-in duration-300">
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-20 z-10 flex flex-col items-center gap-2 animate-in fade-in duration-300">
             <div className="swipe-hint-hand flex h-12 w-12 items-center justify-center rounded-full bg-ink/80 text-2xl shadow-lg">👆</div>
             <span className="rounded-full bg-ink/80 px-3 py-1 text-[12px] font-semibold text-background">Arraste para o lado</span>
           </div>
