@@ -83,7 +83,7 @@ Principais entregas para quem usa:
 |---|---|
 | UI / SPA | React 19 + TanStack Router/Start (SSG estático para nativo) |
 | Estilo | Tailwind v4 (via `@tailwindcss/vite`), shadcn/ui, Radix |
-| Build | Vite 7 (`vite build` gera `dist/client`) |
+| Build | Vite 7 (`vite build` gera `.output/public`, incluindo o `index.html` estático) |
 | Empacotamento nativo | Capacitor 8 (`@capacitor/core@^8.4`) |
 | Notificações | `@capacitor/local-notifications@^8.2` |
 | Atalhos no ícone | `@capawesome/capacitor-app-shortcuts@^8.0` |
@@ -95,9 +95,10 @@ Principais entregas para quem usa:
 | Filesystem | `@capacitor/filesystem@^8.1` |
 | Runtime alvo | Android 8+ (API 26+) · iOS 14+ |
 
-O projeto **não** usa Firebase, OneSignal, Sentry, GA, Mixpanel ou qualquer
-backend próprio. A parte web também roda como PWA em https://chosenapp.lovable.app
-de forma independente do binário nativo.
+O conteúdo devocional e a Bíblia não dependem de backend. Firebase Cloud Messaging
+é usado apenas para push remoto; Chosen IA, painel administrativo, registro de
+push e widgets online precisam de conexão. A parte web também roda como PWA em
+https://chosenapp.lovable.app de forma independente do binário nativo.
 
 ---
 
@@ -109,8 +110,16 @@ Arquivo raiz: `capacitor.config.ts`
 {
   appId: 'com.oonn.chosen',
   appName: 'Chosen',
-  webDir: 'dist/client',
-  server: { androidScheme: 'https', iosScheme: 'https', cleartext: false },
+  webDir: '.output/public',
+  // Não configurar server.url: o app deve abrir os arquivos embutidos.
+  // O hostname preserva a origem local anterior no Android. No iOS, o
+  // WKWebView exige um scheme próprio (http/https não são aceitos).
+  server: {
+    hostname: 'chosen.oonn.com.br',
+    androidScheme: 'https',
+    iosScheme: 'capacitor',
+    cleartext: false,
+  },
   plugins: {
     SplashScreen: { launchShowDuration: 1500, launchAutoHide: true,
                     launchFadeOutDuration: 300, backgroundColor: '#ffffff',
@@ -130,14 +139,18 @@ Arquivo raiz: `capacitor.config.ts`
 ### Regras de build web -> nativo
 
 1. `bun install` (ou `npm ci`)
-2. `bun run build` (roda `vite build` — gera `dist/client`)
-3. `npx cap sync` (copia `dist/client` para `android/app/src/main/assets/public` e para o bundle do iOS)
+2. `bun run build` (roda `vite build` — gera `.output/public` com `index.html`)
+3. `npx cap sync` (copia `.output/public` para `android/app/src/main/assets/public` e para o bundle do iOS)
 4. Abrir o projeto nativo (`npx cap open android` / `npx cap open ios`) e assinar.
 
 > Alternativa: `bun run cap:sync` já faz build + sync em um passo.
 
-O script **não** exige variáveis de ambiente em runtime para o build nativo —
-o app funciona 100% offline após o `sync`.
+O script **não** exige variáveis de ambiente em runtime para abrir o app.
+Mensagens, Bíblia completa, orações, favoritos, grifos, preferências e
+notificações locais funcionam offline após o `sync`. Chosen IA, painel,
+registro/envio de push remoto e atualização dos widgets precisam de internet.
+Como o conteúdo fica dentro do binário, mudanças no app nativo passam a exigir
+um novo build e uma nova versão nas lojas.
 
 ---
 

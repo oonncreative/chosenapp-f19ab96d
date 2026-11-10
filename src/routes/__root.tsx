@@ -181,32 +181,11 @@ function RootComponent() {
   }, [isMono]);
 
   useEffect(() => {
-    // Registrar Service Worker
-    if (typeof window === 'undefined' || !('serviceWorker' in navigator)) return;
-    const host = window.location.hostname;
-    const inIframe = window.self !== window.top;
-    const isPreview =
-      host.startsWith('id-preview--') ||
-      host.startsWith('preview--') ||
-      host.endsWith('.lovableproject.com') ||
-      host.endsWith('.lovableproject-dev.com') ||
-      host.endsWith('.beta.lovable.dev') ||
-      host === 'localhost' ||
-      host === '127.0.0.1';
-    if (inIframe || isPreview) {
-      // Em preview/dev: nunca registra SW e remove qualquer SW antigo presente.
-      navigator.serviceWorker.getRegistrations?.().then((regs) => {
-        regs.forEach((r) => r.unregister().catch(() => {}));
-      });
-      return;
-    }
-    const onLoad = () => {
-      navigator.serviceWorker.register('/sw.js').catch((err) => {
-        console.error('SW registration failed:', err);
-      });
-    };
-    window.addEventListener('load', onLoad);
-    return () => window.removeEventListener('load', onLoad);
+    // O modo offline web fica isolado neste módulo para nunca afetar o preview
+    // nem criar cache desnecessário no app nativo, que já traz seus arquivos.
+    void import("@/lib/registerOffline")
+      .then(({ registerOffline }) => registerOffline())
+      .catch(() => {});
   }, []);
 
   // Back button no Android nativo: só sai do app na rota raiz/home.

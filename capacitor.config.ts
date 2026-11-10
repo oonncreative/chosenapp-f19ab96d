@@ -4,10 +4,15 @@ const config: CapacitorConfig = {
   appId: 'com.oonn.chosen',
   appName: 'Chosen',
   webDir: '.output/public',
+  // Sem server.url: o nativo abre o app embutido e funciona sem internet.
   server: {
-    url: 'https://chosen.oonn.com.br',
+    // Mantém a origem anterior no Android para conservar os dados locais.
+    // As funções online usam o endereço publicado alternativo, sem colisão
+    // com os arquivos servidos localmente pelo Capacitor.
+    hostname: 'chosen.oonn.com.br',
     androidScheme: 'https',
-    iosScheme: 'https',
+    // WKWebView não aceita http/https como scheme local no iOS.
+    iosScheme: 'capacitor',
     cleartext: false,
   },
   plugins: {
