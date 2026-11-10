@@ -1,7 +1,7 @@
 import chosenIcone from "@/assets/chosen-icone.png.asset.json";
 import { AppFooter } from "@/components/AppFooter";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Shuffle, List, GalleryHorizontal, Vibrate, VibrateOff, Heart, MoreHorizontal, X, Search } from "lucide-react";
+import { ChevronRight, Shuffle, List, GalleryHorizontal, Vibrate, VibrateOff, Heart, MoreHorizontal, X, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { CATEGORIAS, getRandomIdForCategoria, getRandomMensagemGlobal } from "@/lib/data";
 import { isShakeEnabled, setShakeEnabled, requestShakePermission } from "@/hooks/useShakeToChosen";
@@ -101,8 +101,8 @@ function HomePage() {
   };
 
   return (
-    <div className="h-[100dvh] overflow-hidden bg-white flex flex-col w-full max-w-[100vw]">
-      <header className="px-4 sm:px-6 pt-[max(env(safe-area-inset-top),2rem)] pb-2 flex flex-col gap-3 shrink-0 bg-white z-20">
+    <div className="h-[100dvh] overflow-hidden bg-background flex flex-col w-full max-w-[100vw]">
+      <header className="px-5 sm:px-6 pt-[max(env(safe-area-inset-top),1.5rem)] pb-3 flex flex-col gap-3 shrink-0 bg-background z-20">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
           <h1 className="flex items-center gap-2 truncate text-sm sm:text-base font-bold tracking-[0.4em] text-brand-olive uppercase"><img src={chosenIcone.url} alt="" className="h-7 w-7 shrink-0 object-contain" />CHOSEN</h1>
           
@@ -177,53 +177,53 @@ function HomePage() {
           </div>
         </div>
 
-        <div className="mt-1 flex items-center justify-between gap-3">
-          {searchOpen ? (
-            <div className="flex items-center gap-2 flex-1 min-w-0 border-b border-black/20 focus-within:border-black transition-colors">
-              <Search className="h-4 w-4 text-black/50 shrink-0" strokeWidth={2} />
-              <input
-                ref={searchInputRef}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onBlur={closeSearchIfEmpty}
-                placeholder="ansiedade, gratidão, medo..."
-                className="flex-1 min-w-0 bg-transparent py-1.5 text-sm text-black placeholder:text-black/30 outline-none"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => { setSearchQuery(""); setSearchOpen(false); }}
-                  aria-label="Limpar busca"
-                  className="shrink-0 p-1 text-black/40 hover:text-black"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              )}
-            </div>
-          ) : (
+        <div className="mt-2">
+          <h2 className="text-[28px] leading-[1.1] font-bold tracking-tight text-ink">Como está seu coração?</h2>
+          <p className="mt-1 text-sm text-ink/60">Escolha seu momento.</p>
+        </div>
+
+        <label className="mt-1 flex items-center gap-2 h-12 px-4 rounded-full bg-surface border border-black/5 focus-within:border-ink/30 transition-colors">
+          <Search className="h-4 w-4 text-ink/50 shrink-0" strokeWidth={2} />
+          <input
+            ref={searchInputRef}
+            value={searchQuery}
+            onFocus={() => setSearchOpen(true)}
+            onChange={(e) => { setSearchQuery(e.target.value); setSearchOpen(true); }}
+            onBlur={closeSearchIfEmpty}
+            placeholder="Buscar por palavra-chave"
+            aria-label="Buscar por palavra-chave"
+            className="flex-1 min-w-0 bg-transparent text-sm text-ink placeholder:text-ink/40 outline-none"
+          />
+          {searchQuery && (
             <button
-              onClick={openSearch}
-              aria-label="Buscar por palavra-chave"
-              className="text-sm sm:text-base font-light tracking-[0.3em] sm:tracking-[0.4em] text-black uppercase text-left cursor-pointer active:opacity-60 transition-opacity"
+              onClick={() => { setSearchQuery(""); setSearchOpen(false); }}
+              aria-label="Limpar busca"
+              className="shrink-0 p-1 text-ink/40 hover:text-ink"
             >
-              Qual seu sentimento?
+              <X className="h-4 w-4" />
             </button>
           )}
-          <div className={`flex items-center gap-0 -mr-1 shrink-0 ${searchOpen ? "hidden" : ""}`}>
-          {([
-            { key: "list" as const, icon: List, label: "Lista" },
-            { key: "swipe" as const, icon: GalleryHorizontal, label: "Swipe" },
-          ]).map(({ key, icon: Icon, label }) => (
-            <button
-              key={key}
-              onClick={() => setViewMode(key)}
-              className={`p-2.5 transition-all ${
-                viewMode === key ? "text-black" : "text-black/25 hover:text-black/60"
-              }`}
-              title={label}
-            >
-              <Icon className="h-[18px] w-[18px]" strokeWidth={2} />
-            </button>
-          ))}
+        </label>
+
+        <div className={`flex justify-center ${searchOpen && searchQuery.trim() ? "hidden" : ""}`}>
+          <div role="tablist" className="inline-flex p-1 rounded-full bg-surface border border-black/5">
+            {([
+              { key: "list" as const, icon: List, label: "Lista" },
+              { key: "swipe" as const, icon: GalleryHorizontal, label: "Swipe" },
+            ]).map(({ key, icon: Icon, label }) => (
+              <button
+                key={key}
+                role="tab"
+                aria-selected={viewMode === key}
+                onClick={() => setViewMode(key)}
+                className={`flex items-center gap-1.5 h-8 px-4 rounded-full text-[13px] font-semibold transition-all ${
+                  viewMode === key ? "bg-brand-yellow text-ink shadow-sm" : "text-ink/50"
+                }`}
+              >
+                <Icon className="h-3.5 w-3.5" strokeWidth={2.25} />
+                {label}
+              </button>
+            ))}
           </div>
         </div>
       </header>
@@ -288,34 +288,71 @@ function goTo(navigate: NavFn, sentimento: string) {
   });
 }
 
-function ListView({ navigate }: { navigate: NavFn }) {
+const FRASES: Record<string, string> = {
+  "Motivação": "Encontre força em Deus para hoje.",
+  "Feliz": "Celebre as bênçãos de hoje.",
+  "Ansioso": "Entregue suas preocupações a Deus.",
+  "Triste": "Encontre consolo em sua presença.",
+  "Sozinho": "Ele está com você agora.",
+  "Agradecido": "Agradeça pelo que Deus fez.",
+  "Nervoso": "Respire e descanse nele.",
+  "Preciso de esperança": "Um novo começo é possível.",
+  "Preciso de paz": "A paz que excede todo entendimento.",
+  "Preciso de força": "Ele renova as suas forças.",
+};
+
+const TINTS = ["bg-tint-lavender", "bg-tint-sky", "bg-tint-peach", "bg-tint-mint", "bg-tint-rose"];
+
+function ListView({ navigate: _navigate }: { navigate: NavFn }) {
+  const [destaque, ...resto] = CATEGORIAS;
   return (
-    <section className="flex-1 min-h-0 overflow-y-auto no-scrollbar px-4 sm:px-6 pb-6 pt-2">
-      <div className="flex flex-col gap-3 w-full">
-        {CATEGORIAS.map((sentimento, i) => (
+    <section className="flex-1 min-h-0 overflow-y-auto no-scrollbar px-5 sm:px-6 pb-36 pt-10">
+      <div className="grid grid-cols-2 gap-3 w-full">
+        <Link
+          to="/mensagem/$sentimento"
+          params={{ sentimento: destaque }}
+          search={{ color: "#f1f26c", id: getRandomIdForCategoria(destaque) }}
+          onClick={() => { void triggerHaptic(); }}
+          className="group relative col-span-2 flex min-h-[168px] rounded-[28px] bg-tint-yellow p-5 text-left active:scale-[0.98] transition-transform mascote-enter"
+        >
+          <div className="relative z-10 flex w-[55%] flex-col">
+            <span className="text-2xl font-bold tracking-tight text-ink">{destaque}</span>
+            <span className="mt-1.5 text-[13px] leading-snug text-ink/65">{FRASES[destaque]}</span>
+            <span className="mt-auto pt-4">
+              <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-background text-ink shadow-sm">
+                <ChevronRight className="h-4 w-4" strokeWidth={2.5} />
+              </span>
+            </span>
+          </div>
+          <div className="pointer-events-none absolute -top-9 right-1 bottom-0 w-[46%] mascote-wrap">
+            <img
+              src={MASCOTES[destaque]}
+              alt={destaque}
+              className="mascote-anim h-full w-full object-contain object-bottom drop-shadow-md"
+            />
+          </div>
+        </Link>
+
+        {resto.map((sentimento, i) => (
           <Link
             key={sentimento}
             to="/mensagem/$sentimento"
             params={{ sentimento }}
             search={{ color: "#f1f26c", id: getRandomIdForCategoria(sentimento) }}
             onClick={() => { void triggerHaptic(); }}
-            className="group relative flex items-center gap-3 sm:gap-4 min-h-[100px] px-4 sm:px-5 py-4 transition-all active:scale-[0.98] rounded-[28px] bg-white hover:-translate-y-0.5 w-full mascote-enter"
-            style={{ animationDelay: `${Math.min(i, 9) * 55}ms` }}
+            className={`group relative flex min-h-[176px] flex-col overflow-hidden rounded-[24px] ${TINTS[i % TINTS.length]} p-4 text-left active:scale-[0.97] transition-transform mascote-enter`}
+            style={{ animationDelay: `${Math.min(i + 1, 9) * 55}ms` }}
           >
-            <div className="mascote-wrap shrink-0 w-[4.75rem] h-[4.75rem] sm:w-[5.25rem] sm:h-[5.25rem] flex items-center justify-center">
+            <span className="relative z-10 text-[17px] font-bold leading-tight tracking-tight text-ink">{sentimento}</span>
+            <span className="relative z-10 mt-1 w-[70%] text-[12px] leading-snug text-ink/60">{FRASES[sentimento]}</span>
+            <div className="pointer-events-none absolute -bottom-1 -right-2 h-[62%] aspect-square mascote-wrap">
               <img
                 src={MASCOTES[sentimento]}
-                alt={sentimento}
-                className="mascote-anim w-full h-full object-contain"
+                alt=""
+                className="mascote-anim h-full w-full object-contain object-bottom"
                 style={{ animationDelay: `${(i % 5) * 400}ms` }}
                 loading="lazy"
               />
-            </div>
-            <span className="flex-1 min-w-0 text-base sm:text-lg font-medium tracking-tight uppercase text-black truncate">{sentimento}</span>
-            <div className="shrink-0 opacity-40 group-hover:opacity-100 transition-opacity text-black">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
             </div>
           </Link>
         ))}
@@ -373,7 +410,7 @@ function SwipeView({ navigate }: { navigate: NavFn }) {
             >
               <button
                 onClick={() => offset === 0 && goTo(navigate, sentimento)}
-                className="w-full h-full rounded-[32px] bg-white flex flex-col items-center justify-center gap-4 sm:gap-6 p-6 sm:p-8 active:scale-[0.98] transition-transform"
+                className="w-full h-full rounded-[32px] bg-tint-yellow flex flex-col items-center justify-center gap-4 sm:gap-6 p-6 sm:p-8 active:scale-[0.98] transition-transform"
               >
                 <div className="mascote-wrap w-[52vw] max-w-52 aspect-square flex items-center justify-center">
                   <img
@@ -382,7 +419,7 @@ function SwipeView({ navigate }: { navigate: NavFn }) {
                     className={`w-full h-full object-contain ${offset === 0 ? "mascote-anim" : ""}`}
                   />
                 </div>
-                <span className="text-xl sm:text-2xl font-medium tracking-tight uppercase text-black text-center break-words">{sentimento}</span>
+                <span className="text-xl sm:text-2xl font-bold tracking-tight text-ink text-center break-words">{sentimento}</span>
               </button>
             </div>
           );

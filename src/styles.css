@@ -20,6 +20,15 @@
 
 @theme inline {
   --color-brand-olive: var(--brand-olive);
+  --color-brand-yellow: var(--brand-yellow);
+  --color-ink: var(--ink);
+  --color-tint-yellow: var(--tint-yellow);
+  --color-tint-lavender: var(--tint-lavender);
+  --color-tint-sky: var(--tint-sky);
+  --color-tint-mint: var(--tint-mint);
+  --color-tint-peach: var(--tint-peach);
+  --color-tint-rose: var(--tint-rose);
+  --color-surface: var(--surface);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -74,6 +83,15 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
   --brand-olive: oklch(0.5 0.1 115);
+  --brand-yellow: oklch(0.93 0.15 108);
+  --ink: oklch(0.22 0.03 90);
+  --tint-yellow: oklch(0.97 0.07 108);
+  --tint-lavender: oklch(0.93 0.05 300);
+  --tint-sky: oklch(0.94 0.04 230);
+  --tint-mint: oklch(0.95 0.045 160);
+  --tint-peach: oklch(0.95 0.045 60);
+  --tint-rose: oklch(0.94 0.04 10);
+  --surface: oklch(0.975 0.004 95);
   --primary: oklch(0.208 0.042 265.755);
   --primary-foreground: oklch(0.984 0.003 247.858);
   --secondary: oklch(0.968 0.007 247.896);
