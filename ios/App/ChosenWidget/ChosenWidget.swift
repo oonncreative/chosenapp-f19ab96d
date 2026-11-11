@@ -17,15 +17,16 @@ struct ChosenEntry: TimelineEntry {
     let referencia: String
     let resumo: String?
     let background: ChosenWidgetBackground
+    let mostrarMascote: Bool
 }
 
 struct ChosenProvider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> ChosenEntry {
-        ChosenEntry(date: Date(), texto: "Uma palavra para agora.", referencia: "CHOSEN", resumo: nil, background: .padrao)
+        ChosenEntry(date: Date(), texto: "Uma palavra para agora.", referencia: "CHOSEN", resumo: nil, background: .padrao, mostrarMascote: true)
     }
 
     func snapshot(for configuration: ConfigurationAppIntent, in context: Context) async -> ChosenEntry {
-        ChosenEntry(date: Date(), texto: "Uma palavra para agora.", referencia: "CHOSEN", resumo: nil, background: configuration.background)
+        ChosenEntry(date: Date(), texto: "Uma palavra para agora.", referencia: "CHOSEN", resumo: nil, background: configuration.background, mostrarMascote: configuration.mostrarMascote)
     }
 
     func timeline(for configuration: ConfigurationAppIntent, in context: Context) async -> Timeline<ChosenEntry> {
@@ -34,11 +35,11 @@ struct ChosenProvider: AppIntentTimelineProvider {
         var entries: [ChosenEntry] = []
 
         if messages.isEmpty {
-            entries.append(ChosenEntry(date: now, texto: "Uma palavra para agora.", referencia: "CHOSEN", resumo: nil, background: configuration.background))
+            entries.append(ChosenEntry(date: now, texto: "Uma palavra para agora.", referencia: "CHOSEN", resumo: nil, background: configuration.background, mostrarMascote: configuration.mostrarMascote))
         } else {
             for (index, message) in messages.enumerated() {
                 let entryDate = Calendar.current.date(byAdding: .hour, value: index * 4, to: now) ?? now
-                entries.append(ChosenEntry(date: entryDate, texto: message.texto, referencia: message.referencia, resumo: message.resumo, background: configuration.background))
+                entries.append(ChosenEntry(date: entryDate, texto: message.texto, referencia: message.referencia, resumo: message.resumo, background: configuration.background, mostrarMascote: configuration.mostrarMascote))
             }
         }
 
@@ -83,30 +84,27 @@ struct ChosenWidgetEntryView: View {
         }
     }
 
-    private var textLineLimit: Int {
-        switch family {
-        case .systemMedium: return 4
-        case .systemLarge: return 5
-        default: return 3
-        }
-    }
-
-    private var textFontSize: CGFloat {
-        switch family {
-        case .systemLarge: return 17
-        case .systemMedium: return 15
-        default: return 14
-        }
-    }
-
-    private var resumoTruncado: String? {
+    /// Resumo (reflexão), quando existe. Aparece inteiro no widget grande.
+    private var resumoTexto: String? {
         guard let resumo = entry.resumo, !resumo.isEmpty else { return nil }
-        let limite = 280
-        if resumo.count <= limite {
-            return resumo
-        }
-        let indice = resumo.index(resumo.startIndex, offsetBy: limite)
-        return String(resumo[..<indice]) + "..."
+        return resumo
+    }
+
+    private func referenciaView(_ tamanho: CGFloat) -> some View {
+        Text(entry.referencia)
+            .font(.system(size: tamanho))
+            .foregroundStyle(textColor.opacity(0.7))
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
+    }
+
+    private func mascote(_ lado: CGFloat) -> some View {
+        Image("WidgetMascote")
+            .resizable()
+            .widgetAccentedRenderingMode(.fullColor)
+            .scaledToFit()
+            .frame(width: lado, height: lado)
+            .accessibilityHidden(true)
     }
 
     var body: some View {
@@ -121,7 +119,8 @@ struct ChosenWidgetEntryView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(entry.texto)
                     .font(.system(size: 13, weight: .medium))
-                    .lineLimit(3)
+                    .minimumScaleFactor(0.7)
+                    .lineLimit(4)
                 Text(entry.referencia)
                     .font(.system(size: 11))
                     .opacity(0.7)
@@ -134,29 +133,91 @@ struct ChosenWidgetEntryView: View {
                 Text(entry.referencia)
                     .font(.system(size: 9))
             }
-        case .systemSmall, .systemMedium, .systemLarge:
-            VStack(alignment: .leading, spacing: 6) {
-                Text(entry.texto)
-                    .font(.system(size: textFontSize, weight: .medium))
-                    .foregroundStyle(textColor)
-                    .lineLimit(textLineLimit)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                if family == .systemLarge, let resumo = resumoTruncado {
-                    Text(resumo)
-                        .font(.system(size: 12))
-                        .foregroundStyle(textColor.opacity(0.8))
-                        .lineLimit(8)
-                }
-
-                Spacer(minLength: 0)
-                Text(entry.referencia)
-                    .font(.system(size: 12))
-                    .foregroundStyle(textColor.opacity(0.7))
-            }
-            .padding()
+        case .systemSmall:
+            smallLayout
+        case .systemMedium:
+            mediumLayout
+        case .systemLarge:
+            largeLayout
         default:
             EmptyView()
+        }
+    }
+
+    // MARK: - Pequeno
+    // O texto nunca é cortado: se não couber, a letra diminui.
+    // O mascote só aparece quando o texto é curto (até 60 caracteres),
+    // para não tirar espaço do texto.
+    private var smallLayout: some View {
+        let comMascote = entry.mostrarMascote && entry.texto.count <= 60
+        return ZStack(alignment: .bottomTrailing) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(entry.texto)
+                    .font(.system(size: comMascote ? 13 : 14, weight: .medium))
+                    .foregroundStyle(textColor)
+                    .minimumScaleFactor(comMascote ? 0.8 : 0.55)
+                    .frame(maxWidth: .infinity, maxHeight: comMascote ? 56 : CGFloat.infinity, alignment: .topLeading)
+                referenciaView(11)
+                if comMascote {
+                    Spacer(minLength: 0)
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+
+            if comMascote {
+                mascote(48)
+            }
+        }
+    }
+
+    // MARK: - Médio
+    // Texto à esquerda (diminui a letra se for longo), mascote à direita.
+    private var mediumLayout: some View {
+        HStack(alignment: .bottom, spacing: 8) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(entry.texto)
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundStyle(textColor)
+                    .minimumScaleFactor(0.55)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                referenciaView(12)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+
+            if entry.mostrarMascote {
+                mascote(104)
+            }
+        }
+    }
+
+    // MARK: - Grande
+    // Título e mascote no topo; o resumo ocupa o resto, inteiro (a letra se ajusta).
+    private var largeLayout: some View {
+        let temResumo = resumoTexto != nil
+        return VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .top, spacing: 8) {
+                Text(entry.texto)
+                    .font(.system(size: temResumo ? 17 : 22, weight: .medium))
+                    .foregroundStyle(textColor)
+                    .minimumScaleFactor(0.6)
+                    .frame(maxWidth: .infinity, maxHeight: temResumo ? 96 : 200, alignment: .topLeading)
+
+                if entry.mostrarMascote {
+                    mascote(72)
+                }
+            }
+
+            if let resumoCompleto = resumoTexto {
+                Text(resumoCompleto)
+                    .font(.system(size: 12))
+                    .foregroundStyle(textColor.opacity(0.85))
+                    .minimumScaleFactor(0.55)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            } else {
+                Spacer(minLength: 0)
+            }
+
+            referenciaView(12)
         }
     }
 }

@@ -40,4 +40,7 @@ struct ConfigurationAppIntent: WidgetConfigurationIntent {
 
     @Parameter(title: "Conteúdo", default: .misto)
     var contentType: ChosenWidgetContentType
+
+    @Parameter(title: "Mostrar mascote", default: true)
+    var mostrarMascote: Bool
 }

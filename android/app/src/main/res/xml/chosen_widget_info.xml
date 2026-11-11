@@ -9,4 +9,5 @@
     android:initialLayout="@android:layout/simple_list_item_1"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"
+    android:widgetFeatures="reconfigurable"
     android:configure="com.oonn.chosen.widget.ChosenWidgetConfigureActivity" />
